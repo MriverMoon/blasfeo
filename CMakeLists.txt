@@ -67,7 +67,7 @@ set(LA HIGH_PERFORMANCE CACHE STRING "Linear algebra backend")
 # set(LA BLAS CACHE STRING "Linear algebra backend")
 
 # Export additional back-ends with different naming
-set(BLASFEO_REF_API OFF)
+set(BLASFEO_REF_API ON)
 set(BLASFEO_HP_API OFF)
 
 # Select the Matrix Format internally used in the blasfeo_{d,s}mat structure
