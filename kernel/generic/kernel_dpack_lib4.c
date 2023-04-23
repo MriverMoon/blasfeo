@@ -35,7 +35,7 @@
 
 
 
-#include <blasfeo_d_kernel.h>
+#include "../../include/blasfeo_d_kernel.h"
 
 
 

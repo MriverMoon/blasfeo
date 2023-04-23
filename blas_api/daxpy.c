@@ -43,61 +43,33 @@
 
 
 #if defined(FORTRAN_BLAS_API)
-#define blasfeo_blas_daxpy daxpy_
+#define blas_daxpy daxpy_
 #endif
 
 
-void blasfeo_blas_daxpy(int *pn, double *alpha, double *x, int *pincx, double *y, int *pincy)
+void blas_daxpy(int *ptr_n, double *alpha, double *x, int *ptr_ix, double *y, int *ptr_iy)
 	{
-	int n = *pn;
-	int incx = *pincx;
-	int incy = *pincy;
-
-	int ix, iy;
-	int ii;
+	int n = *ptr_n;
+	int ix = *ptr_ix;
+	int iy = *ptr_iy;
 
 	if(n<=0)
-		{
 		return;
-		}
 	if(*alpha==0.0)
-		{
 		return;
-		}
 
-	if ((incx == 1) && (incy ==1))
+	int ii;
+	ii = 0;
+	if ((ix == 1) && (iy ==1))
 		{
-#if defined(LA_REFERENCE)
-		for(ii=0; ii<n; ii++)
-			y[ii] = y[ii] + *alpha*x[ii];
-#else
+//		for(; ii<n; ii++)
+//			y[ii] = y[ii] + *alpha*x[ii];
 		kernel_daxpy_11_lib(n, alpha, x, y);
-#endif
 		}
 	else
 		{
-		if(incx<0)
-			{
-			ix = - (n-1) * incx;
-			}
-		else
-			{
-			ix = 0;
-			}
-		if(incy<0)
-			{
-			iy = - (n-1) * incy;
-			}
-		else
-			{
-			iy = 0;
-			}
-		for(ii=0; ii<n; ii++)
-			{
-			y[iy] = y[iy] + *alpha*x[ix];
-			ix += incx;
-			iy += incy;
-			}
+		for(; ii<n; ii++)
+			y[ii*iy] = y[ii*iy] + *alpha*x[ii*ix];
 		}
 	return;
 	}

@@ -13,13 +13,12 @@ The API is non-destructive, and compared to the BLAS API it has an additional ma
 
 | API                           | Optimized (level 3) routines                       |
 | ----------------------------- | -------------------------------------------------- |
-| BLASFEO <br> (small matrices) | dgemm, dsyrk, dsyr2k, dtrmm, dtrsm, dpotrf, dgetrf, dgeqrf, dgelqf, <br> sgemm, ssyrk, strmm, strsm, spotrf |
-| BLAS    <br> (small matrices) | dgemm, dsyrk, dsyr2k, dtrmm, dtrsm, dpotrf, dgetrf <br> sgemm, strsm, spotrf |
-| BLAS    <br> (large matrices) | dgemm, dsyrk, dsyr2k, dtrmm*, dtrsm*, dpotrf*, <br> sgemm |
+| BLASFEO <br> (small matrices) | dgemm, dsyrk, dtrmm, dtrsm, dpotrf, dgetrf, dgeqrf, dgelqf, <br> sgemm, ssyrk, strmm, strsm, spotrf |
+| BLAS    <br> (small matrices) | dgemm, dsyrk, dtrmm, dtrsm, dpotrf, dgetrf <br> sgemm, strsm, spotrf |
+| BLAS    <br> (large matrices) | dgemm <br> sgemm |
 
 Note: BLASFEO is currently under active development.
 Some of the routines listed in the previous table may only be optimized for some variants, and provide reference implementations for other variants.
-E.g. only some variants of the routines marked with '*' are optimized for large matrices.
 
 ## Supported Computer Architectures
 
@@ -28,14 +27,12 @@ Currently BLASFEO supports the following architectures:
 
 | TARGET                       | Description |
 | ---------------------------- | ------------------------------------------------------------- |
-| ```X64_INTEL_SKYLAKE_X```    | Intel Skylake-X architecture or newer (optimized for 2 512-bit FMA pipes). x86_64 with AVX512 (F+VL) ISA, 64-bit OS |
 | ```X64_INTEL_HASWELL```      | Intel Haswell, Intel Skylake, AMD Zen, AMD Zen2, AMD Zen3 architectures or newer. x86_64 with AVX2 and FMA ISA, 64-bit OS |
 | ```X64_INTEL_SANDY_BRIDGE``` | Intel Sandy-Bridge architecture. x86_64 with AVX ISA, 64-bit OS |
 | ```X64_INTEL_CORE```         | Intel Core architecture. x86_64 with SSE3 ISA, 64-bit OS |
 | ```X64_AMD_BULLDOZER```      | AMD Bulldozer architecture. x86_64 with AVX and FMA ISAs, 64-bit OS |
 | ```X86_AMD_JAGUAR```         | AMD Jaguar architecture. x86 with AVX ISA, 32-bit OS |
 | ```X86_AMD_BARCELONA```      | AMD Barcelona architecture. x86 with SSE3 ISA, 32-bit OS |
-| ```ARMV8A_APPLE_M1```        | Apple M1 architecture or newer. ARMv8A with VFPv4 and NEONv2 ISAs, 64-bit OS |
 | ```ARMV8A_ARM_CORTEX_A76```  | ARM Cortex A76 architecture or newer. ARMv8A with VFPv4 and NEONv2 ISAs, 64-bit OS |
 | ```ARMV8A_ARM_CORTEX_A73```  | ARM Cortex A73 architecture or newer. ARMv8A with VFPv4 and NEONv2 ISAs, 64-bit OS |
 | ```ARMV8A_ARM_CORTEX_A57```  | ARM Cortex A57, A72 architectures. ARMv8A with VFPv4 and NEONv2 ISAs, 64-bit OS |
@@ -46,7 +43,7 @@ Currently BLASFEO supports the following architectures:
 | ```ARMV7A_ARM_CORTEX_A7```   | ARM Cortex A7 architecture. ARMv7A with VFPv4 and NEON ISAs, 32-bit OS |
 | ```GENERIC```                | Generic target, coded in C, giving better performance if the architecture provides more than 16 scalar FP registers (e.g. many RISC such as ARM) |
 
-Note that the ```X64_INTEL_SKYLAKE_X```, ```ARMV8A_APPLE_M1```, ```ARMV8A_ARM_CORTEX_A76```, ```ARMV8A_ARM_CORTEX_A73```, ```ARMV8A_ARM_CORTEX_A55```, ```X86_AMD_JAGUAR``` and ```X86_AMD_BARCELONA``` architectures are not currently supported by the CMake build system and can only be used through the included Makefile.
+Note that the ```ARMV8A_ARM_CORTEX_A76```, ```ARMV8A_ARM_CORTEX_A73```, ```ARMV8A_ARM_CORTEX_A55```, ```X86_AMD_JAGUAR``` and ```X86_AMD_BARCELONA``` architectures are not currently supported by the CMake build system and can only be used through the included Makefile.
 
 ### Automatic Target Detection
 

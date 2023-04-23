@@ -194,35 +194,17 @@ void blasfeo_hp_dgemv_nt(int m, int n, double alpha_n, double alpha_t, struct bl
 	int ii;
 
 	// copy and scale y_n int z_n
-	if(beta_n==0.0)
+	ii = 0;
+	for(; ii<m-3; ii+=4)
 		{
-		ii = 0;
-		for(; ii<m-3; ii+=4)
-			{
-			z_n[ii+0] = 0.0;
-			z_n[ii+1] = 0.0;
-			z_n[ii+2] = 0.0;
-			z_n[ii+3] = 0.0;
-			}
-		for(; ii<m; ii++)
-			{
-			z_n[ii+0] = 0.0;
-			}
+		z_n[ii+0] = beta_n*y_n[ii+0];
+		z_n[ii+1] = beta_n*y_n[ii+1];
+		z_n[ii+2] = beta_n*y_n[ii+2];
+		z_n[ii+3] = beta_n*y_n[ii+3];
 		}
-	else
+	for(; ii<m; ii++)
 		{
-		ii = 0;
-		for(; ii<m-3; ii+=4)
-			{
-			z_n[ii+0] = beta_n*y_n[ii+0];
-			z_n[ii+1] = beta_n*y_n[ii+1];
-			z_n[ii+2] = beta_n*y_n[ii+2];
-			z_n[ii+3] = beta_n*y_n[ii+3];
-			}
-		for(; ii<m; ii++)
-			{
-			z_n[ii+0] = beta_n*y_n[ii+0];
-			}
+		z_n[ii+0] = beta_n*y_n[ii+0];
 		}
 	
 	ii = 0;
@@ -250,9 +232,9 @@ void blasfeo_hp_dgemv_nt(int m, int n, double alpha_n, double alpha_t, struct bl
 void blasfeo_hp_dsymv_l(int m, double alpha, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, double beta, struct blasfeo_dvec *sy, int yi, struct blasfeo_dvec *sz, int zi)
 	{
 
-	if((m<=0) | (alpha==0 & beta==0))
+	if(m<=0)
 		return;
-
+	
 	const int bs = 4;
 
 	int ii, n1;
@@ -263,36 +245,18 @@ void blasfeo_hp_dsymv_l(int m, double alpha, struct blasfeo_dmat *sA, int ai, in
 	double *y = sy->pa + yi;
 	double *z = sz->pa + zi;
 
-	// copy and scale y into z
-	if(beta==0.0)
+	// copy and scale y int z
+	ii = 0;
+	for(; ii<m-3; ii+=4)
 		{
-		ii = 0;
-		for(; ii<m-3; ii+=4)
-			{
-			z[ii+0] = 0.0;
-			z[ii+1] = 0.0;
-			z[ii+2] = 0.0;
-			z[ii+3] = 0.0;
-			}
-		for(; ii<m; ii++)
-			{
-			z[ii+0] = 0.0;
-			}
+		z[ii+0] = beta*y[ii+0];
+		z[ii+1] = beta*y[ii+1];
+		z[ii+2] = beta*y[ii+2];
+		z[ii+3] = beta*y[ii+3];
 		}
-	else
+	for(; ii<m; ii++)
 		{
-		ii = 0;
-		for(; ii<m-3; ii+=4)
-			{
-			z[ii+0] = beta*y[ii+0];
-			z[ii+1] = beta*y[ii+1];
-			z[ii+2] = beta*y[ii+2];
-			z[ii+3] = beta*y[ii+3];
-			}
-		for(; ii<m; ii++)
-			{
-			z[ii+0] = beta*y[ii+0];
-			}
+		z[ii+0] = beta*y[ii+0];
 		}
 
 	// clean up at the beginning
@@ -457,35 +421,17 @@ void blasfeo_hp_dsymv_l_mn(int m, int n, double alpha, struct blasfeo_dmat *sA, 
 	double *z = sz->pa + zi;
 
 	// copy and scale y int z
-	if(beta==0.0)
+	ii = 0;
+	for(; ii<m-3; ii+=4)
 		{
-		ii = 0;
-		for(; ii<m-3; ii+=4)
-			{
-			z[ii+0] = 0.0;
-			z[ii+1] = 0.0;
-			z[ii+2] = 0.0;
-			z[ii+3] = 0.0;
-			}
-		for(; ii<m; ii++)
-			{
-			z[ii+0] = 0.0;
-			}
+		z[ii+0] = beta*y[ii+0];
+		z[ii+1] = beta*y[ii+1];
+		z[ii+2] = beta*y[ii+2];
+		z[ii+3] = beta*y[ii+3];
 		}
-	else
+	for(; ii<m; ii++)
 		{
-		ii = 0;
-		for(; ii<m-3; ii+=4)
-			{
-			z[ii+0] = beta*y[ii+0];
-			z[ii+1] = beta*y[ii+1];
-			z[ii+2] = beta*y[ii+2];
-			z[ii+3] = beta*y[ii+3];
-			}
-		for(; ii<m; ii++)
-			{
-			z[ii+0] = beta*y[ii+0];
-			}
+		z[ii+0] = beta*y[ii+0];
 		}
 
 	// clean up at the beginning
@@ -641,26 +587,8 @@ void blasfeo_hp_dsymv_l_mn(int m, int n, double alpha, struct blasfeo_dmat *sA, 
 
 
 
-void blasfeo_hp_dsymv_u(int m, double alpha, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, double beta, struct blasfeo_dvec *sy, int yi, struct blasfeo_dvec *sz, int zi)
-	{
-
-	if(m<=0)
-		return;
-
-#if defined(BLASFEO_REF_API)
-		blasfeo_ref_dsymv_u(m, alpha, sA, ai, aj, sx, xi, beta, sy, yi, sz, zi);
-		return;
-#else
-		printf("\nblasfeo_dsymv_u: feature not implemented yet\n");
-		exit(1);
-#endif
-
-	}
-
-
-
 // m >= n
-static void blasfeo_hp_dtrmv_lnn_mn(int m, int n, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi)
+void blasfeo_hp_dtrmv_lnn(int m, int n, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi)
 	{
 
 	if(m<=0)
@@ -765,16 +693,8 @@ static void blasfeo_hp_dtrmv_lnn_mn(int m, int n, struct blasfeo_dmat *sA, int a
 
 
 
-void blasfeo_hp_dtrmv_lnn(int m, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi)
-	{
-	blasfeo_hp_dtrmv_lnn_mn(m, m, sA, ai, aj, sx, xi, sz, zi);
-	return;
-	}
-
-
-
 // m >= n
-static void blasfeo_hp_dtrmv_lnu_mn(int m, int n, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi)
+void blasfeo_hp_dtrmv_lnu(int m, int n, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi)
 	{
 
 	if(m<=0)
@@ -874,16 +794,8 @@ static void blasfeo_hp_dtrmv_lnu_mn(int m, int n, struct blasfeo_dmat *sA, int a
 
 
 
-void blasfeo_hp_dtrmv_lnu(int m, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi)
-	{
-	blasfeo_hp_dtrmv_lnu_mn(m, m, sA, ai, aj, sx, xi, sz, zi);
-	return;
-	}
-
-
-
 // m >= n
-static void blasfeo_hp_dtrmv_ltn_mn(int m, int n, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi)
+void blasfeo_hp_dtrmv_ltn(int m, int n, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi)
 	{
 
 	if(m<=0)
@@ -1007,16 +919,8 @@ static void blasfeo_hp_dtrmv_ltn_mn(int m, int n, struct blasfeo_dmat *sA, int a
 
 
 
-void blasfeo_hp_dtrmv_ltn(int m, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi)
-	{
-	blasfeo_hp_dtrmv_ltn_mn(m, m, sA, ai, aj, sx, xi, sz, zi);
-	return;
-	}
-
-
-
 // m >= n
-static void blasfeo_hp_dtrmv_ltu_mu(int m, int n, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi)
+void blasfeo_hp_dtrmv_ltu(int m, int n, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi)
 	{
 
 	if(m<=0)
@@ -1136,14 +1040,6 @@ static void blasfeo_hp_dtrmv_ltu_mu(int m, int n, struct blasfeo_dmat *sA, int a
 
 	return;
 
-	}
-
-
-
-void blasfeo_hp_dtrmv_ltu(int m, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi)
-	{
-	blasfeo_hp_dtrmv_ltu_mu(m, m, sA, ai, aj, sx, xi, sz, zi);
-	return;
 	}
 
 
@@ -1823,20 +1719,6 @@ void blasfeo_hp_dtrsv_utn(int m, struct blasfeo_dmat *sA, int ai, int aj, struct
 
 
 
-void blasfeo_hp_dger(int m, int n, double alpha, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sy, int yi, struct blasfeo_dmat *sC, int ci, int cj, struct blasfeo_dmat *sD, int di, int dj)
-	{
-#if defined(BLASFEO_REF_API)
-	blasfeo_ref_dger(m, n, alpha, sx, xi, sy, yi, sC, ci, cj, sD, di, dj);
-	return;
-#else
-	printf("\nblasfeo_dger: feature not implemented yet\n");
-	exit(1);
-#endif
-	return;
-	}
-
-
-
 #if defined(LA_HIGH_PERFORMANCE)
 
 
@@ -1876,37 +1758,30 @@ void blasfeo_dsymv_l_mn(int m, int n, double alpha, struct blasfeo_dmat *sA, int
 
 
 
-void blasfeo_dsymv_u(int m, double alpha, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, double beta, struct blasfeo_dvec *sy, int yi, struct blasfeo_dvec *sz, int zi)
+void blasfeo_dtrmv_lnn(int m, int n, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi)
 	{
-	blasfeo_hp_dsymv_u(m, alpha, sA, ai, aj, sx, xi, beta, sy, yi, sz, zi);
+	blasfeo_hp_dtrmv_lnn(m, n, sA, ai, aj, sx, xi, sz, zi);
 	}
 
 
 
-void blasfeo_dtrmv_lnn(int m, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi)
+void blasfeo_dtrmv_lnu(int m, int n, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi)
 	{
-	blasfeo_hp_dtrmv_lnn(m, sA, ai, aj, sx, xi, sz, zi);
+	blasfeo_hp_dtrmv_lnu(m, n, sA, ai, aj, sx, xi, sz, zi);
 	}
 
 
 
-void blasfeo_dtrmv_lnu(int m, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi)
+void blasfeo_dtrmv_ltn(int m, int n, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi)
 	{
-	blasfeo_hp_dtrmv_lnu(m, sA, ai, aj, sx, xi, sz, zi);
+	blasfeo_hp_dtrmv_ltn(m, n, sA, ai, aj, sx, xi, sz, zi);
 	}
 
 
 
-void blasfeo_dtrmv_ltn(int m, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi)
+void blasfeo_dtrmv_ltu(int m, int n, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi)
 	{
-	blasfeo_hp_dtrmv_ltn(m, sA, ai, aj, sx, xi, sz, zi);
-	}
-
-
-
-void blasfeo_dtrmv_ltu(int m, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi)
-	{
-	blasfeo_hp_dtrmv_ltu(m, sA, ai, aj, sx, xi, sz, zi);
+	blasfeo_hp_dtrmv_ltu(m, n, sA, ai, aj, sx, xi, sz, zi);
 	}
 
 
@@ -1977,13 +1852,6 @@ void blasfeo_dtrsv_unn(int m, struct blasfeo_dmat *sA, int ai, int aj, struct bl
 void blasfeo_dtrsv_utn(int m, struct blasfeo_dmat *sA, int ai, int aj, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi)
 	{
 	blasfeo_hp_dtrsv_utn(m, sA, ai, aj, sx, xi, sz, zi);
-	}
-
-
-
-void blasfeo_dger(int m, int n, double alpha, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sy, int yi, struct blasfeo_dmat *sC, int ci, int cj, struct blasfeo_dmat *sD, int di, int dj)
-	{
-	blasfeo_hp_dger(m, n, alpha, sx, xi, sy, yi, sC, ci, cj, sD, di, dj);
 	}
 
 

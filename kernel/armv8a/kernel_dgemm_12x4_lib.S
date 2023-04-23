@@ -2904,8 +2904,46 @@
 #endif
 
 	cmp		w10, #12
-	blt		1f
+	bge		1f
 
+	mov		x12, x8
+
+	ldp		q24, q25, [x12, #64]
+	add		x12, x12, x9
+	ldp		q26, q27, [x12, #64]
+	add		x12, x12, x9
+	ldp		q28, q29, [x12, #64]
+	add		x12, x12, x9
+	ldp		q30, q31, [x12, #64]
+
+	// 4th row
+	ins		v17.d[1], v25.d[1]
+	ins		v19.d[1], v27.d[1]
+	ins		v21.d[1], v29.d[1]
+	ins		v23.d[1], v31.d[1]
+	cmp		w10, #11
+	bge		1f
+	// 3th row
+	ins		v17.d[0], v25.d[0]
+	ins		v19.d[0], v27.d[0]
+	ins		v21.d[0], v29.d[0]
+	ins		v23.d[0], v31.d[0]
+	cmp		w10, #10
+	bge		1f
+	// 2nd row
+	ins		v16.d[1], v24.d[1]
+	ins		v18.d[1], v26.d[1]
+	ins		v20.d[1], v28.d[1]
+	ins		v22.d[1], v30.d[1]
+	cmp		w10, #9
+	bge		1f
+	// 1st row
+	ins		v16.d[0], v24.d[0]
+	ins		v18.d[0], v26.d[0]
+	ins		v20.d[0], v28.d[0]
+	ins		v22.d[0], v30.d[0]
+
+1:
 	// 1st col
 	stp		q0, q1, [x8, #0]
 	stp		q8, q9, [x8, #32]
@@ -2931,104 +2969,6 @@
 	stp		q6, q7, [x8, #0]
 	stp		q14, q15, [x8, #32]
 	stp		q22, q23, [x8, #64]
-	b		0f
-
-1:
-	cmp		w10, #11
-	blt		1f
-
-	// 1st col
-	stp		q0, q1, [x8, #0]
-	stp		q8, q9, [x8, #32]
-	str		q16, [x8, #64]
-	str		d17, [x8, #80]
-	add		x8, x8, x9
-	cmp		w11, #2
-	blt		0f
-	// 2nd col
-	stp		q2, q3, [x8, #0]
-	stp		q10, q11, [x8, #32]
-	str		q18, [x8, #64]
-	str		d19, [x8, #80]
-	add		x8, x8, x9
-	cmp		w11, #3
-	blt		0f
-	// 3rd col
-	stp		q4, q5, [x8, #0]
-	stp		q12, q13, [x8, #32]
-	str		q20, [x8, #64]
-	str		d21, [x8, #80]
-	add		x8, x8, x9
-	cmp		w11, #3
-	beq		0f
-	// 4th col
-	stp		q6, q7, [x8, #0]
-	stp		q14, q15, [x8, #32]
-	str		q22, [x8, #64]
-	str		d23, [x8, #80]
-	b		0f
-
-1:
-	cmp		w10, #10
-	blt		1f
-
-	// 1st col
-	stp		q0, q1, [x8, #0]
-	stp		q8, q9, [x8, #32]
-	str		q16, [x8, #64]
-	add		x8, x8, x9
-	cmp		w11, #2
-	blt		0f
-	// 2nd col
-	stp		q2, q3, [x8, #0]
-	stp		q10, q11, [x8, #32]
-	str		q18, [x8, #64]
-	add		x8, x8, x9
-	cmp		w11, #3
-	blt		0f
-	// 3rd col
-	stp		q4, q5, [x8, #0]
-	stp		q12, q13, [x8, #32]
-	str		q20, [x8, #64]
-	add		x8, x8, x9
-	cmp		w11, #3
-	beq		0f
-	// 4th col
-	stp		q6, q7, [x8, #0]
-	stp		q14, q15, [x8, #32]
-	str		q22, [x8, #64]
-	b		0f
-
-1:
-//	cmp		w10, #9
-//	blt		0f
-
-	// 1st col
-	stp		q0, q1, [x8, #0]
-	stp		q8, q9, [x8, #32]
-	str		d16, [x8, #64]
-	add		x8, x8, x9
-	cmp		w11, #2
-	blt		0f
-	// 2nd col
-	stp		q2, q3, [x8, #0]
-	stp		q10, q11, [x8, #32]
-	str		d18, [x8, #64]
-	add		x8, x8, x9
-	cmp		w11, #3
-	blt		0f
-	// 3rd col
-	stp		q4, q5, [x8, #0]
-	stp		q12, q13, [x8, #32]
-	str		d20, [x8, #64]
-	add		x8, x8, x9
-	cmp		w11, #3
-	beq		0f
-	// 4th col
-	stp		q6, q7, [x8, #0]
-	stp		q14, q15, [x8, #32]
-	str		d22, [x8, #64]
-//	b		0f
 
 0:
 
@@ -3059,15 +2999,22 @@
 	FUN_START(inner_store_l_12x4_lib)
 #endif
 
-	ins		v24.d[0], v2.d[1]
-	ins		v25.d[0], v7.d[1]
+	mov		x12, x8
+
+	add		x12, x12, x9
+	ldr		q24, [x12, #0]
+	add		x12, x12, x9
+	add		x12, x12, x9
+	ldr		q25, [x12, #16]
+
+	ins		v2.d[0], v24.d[0]
+	ins		v7.d[0], v25.d[0]
 
 	stp		q0, q1, [x8, #0]
 	stp		q8, q9, [x8, #32]
 	stp		q16, q17, [x8, #64]
 	add		x8, x8, x9
-	str		d24, [x8, #8]
-	str		q3, [x8, #16]
+	stp		q2, q3, [x8, #0]
 	stp		q10, q11, [x8, #32]
 	stp		q18, q19, [x8, #64]
 	add		x8, x8, x9
@@ -3075,7 +3022,7 @@
 	stp		q12, q13, [x8, #32]
 	stp		q20, q21, [x8, #64]
 	add		x8, x8, x9
-	str		d25, [x8, #24]
+	str		q7, [x8, #16]
 	stp		q14, q15, [x8, #32]
 	stp		q22, q23, [x8, #64]
 
@@ -3109,7 +3056,56 @@
 #endif
 
 	cmp		w10, #12
-	blt		1f
+	bge		1f
+
+	mov		x12, x8
+
+	ldp		q24, q25, [x12, #64]
+	add		x12, x12, x9
+	ldp		q26, q27, [x12, #64]
+	add		x12, x12, x9
+	ldp		q28, q29, [x12, #64]
+	add		x12, x12, x9
+	ldp		q30, q31, [x12, #64]
+
+	// 4th row
+	ins		v17.d[1], v25.d[1]
+	ins		v19.d[1], v27.d[1]
+	ins		v21.d[1], v29.d[1]
+	ins		v23.d[1], v31.d[1]
+	cmp		w10, #11
+	bge		1f
+	// 3th row
+	ins		v17.d[0], v25.d[0]
+	ins		v19.d[0], v27.d[0]
+	ins		v21.d[0], v29.d[0]
+	ins		v23.d[0], v31.d[0]
+	cmp		w10, #10
+	bge		1f
+	// 2nd row
+	ins		v16.d[1], v24.d[1]
+	ins		v18.d[1], v26.d[1]
+	ins		v20.d[1], v28.d[1]
+	ins		v22.d[1], v30.d[1]
+	cmp		w10, #9
+	bge		1f
+	// 1st row
+	ins		v16.d[0], v24.d[0]
+	ins		v18.d[0], v26.d[0]
+	ins		v20.d[0], v28.d[0]
+	ins		v22.d[0], v30.d[0]
+
+1:
+	mov		x12, x8
+
+	add		x12, x12, x9
+	ldr		q24, [x12, #0]
+	add		x12, x12, x9
+	add		x12, x12, x9
+	ldr		q25, [x12, #16]
+
+	ins		v2.d[0], v24.d[0]
+	ins		v7.d[0], v25.d[0]
 
 	// 1st col
 	stp		q0, q1, [x8, #0]
@@ -3119,9 +3115,7 @@
 	cmp		w11, #2
 	blt		0f
 	// 2nd col
-	ins		v24.d[0], v2.d[1]
-	str		d24, [x8, #8]
-	str		q3, [x8, #16]
+	stp		q2, q3, [x8, #0]
 	stp		q10, q11, [x8, #32]
 	stp		q18, q19, [x8, #64]
 	add		x8, x8, x9
@@ -3135,117 +3129,9 @@
 	cmp		w11, #3
 	beq		0f
 	// 4th col
-	ins		v25.d[0], v7.d[1]
-	str		d25, [x8, #24]
+	str		q7, [x8, #16]
 	stp		q14, q15, [x8, #32]
 	stp		q22, q23, [x8, #64]
-	b		0f
-
-1:
-	cmp		w10, #11
-	blt		1f
-
-	// 1st col
-	stp		q0, q1, [x8, #0]
-	stp		q8, q9, [x8, #32]
-	str		q16, [x8, #64]
-	str		d17, [x8, #80]
-	add		x8, x8, x9
-	cmp		w11, #2
-	blt		0f
-	// 2nd col
-	ins		v24.d[0], v2.d[1]
-	str		d24, [x8, #8]
-	str		q3, [x8, #16]
-	stp		q10, q11, [x8, #32]
-	str		q18, [x8, #64]
-	str		d19, [x8, #80]
-	add		x8, x8, x9
-	cmp		w11, #3
-	blt		0f
-	// 3rd col
-	str		q5, [x8, #16]
-	stp		q12, q13, [x8, #32]
-	str		q20, [x8, #64]
-	str		d21, [x8, #80]
-	add		x8, x8, x9
-	cmp		w11, #3
-	beq		0f
-	// 4th col
-	ins		v25.d[0], v7.d[1]
-	str		d25, [x8, #24]
-	stp		q14, q15, [x8, #32]
-	str		q22, [x8, #64]
-	str		d23, [x8, #80]
-	b		0f
-
-1:
-	cmp		w10, #10
-	blt		1f
-
-	// 1st col
-	stp		q0, q1, [x8, #0]
-	stp		q8, q9, [x8, #32]
-	str		q16, [x8, #64]
-	add		x8, x8, x9
-	cmp		w11, #2
-	blt		0f
-	// 2nd col
-	ins		v24.d[0], v2.d[1]
-	str		d24, [x8, #8]
-	str		q3, [x8, #16]
-	stp		q10, q11, [x8, #32]
-	str		q18, [x8, #64]
-	add		x8, x8, x9
-	cmp		w11, #3
-	blt		0f
-	// 3rd col
-	str		q5, [x8, #16]
-	stp		q12, q13, [x8, #32]
-	str		q20, [x8, #64]
-	add		x8, x8, x9
-	cmp		w11, #3
-	beq		0f
-	// 4th col
-	ins		v25.d[0], v7.d[1]
-	str		d25, [x8, #24]
-	stp		q14, q15, [x8, #32]
-	str		q22, [x8, #64]
-	b		0f
-
-1:
-//	cmp		w10, #9
-//	blt		0f
-
-	// 1st col
-	stp		q0, q1, [x8, #0]
-	stp		q8, q9, [x8, #32]
-	str		d16, [x8, #64]
-	add		x8, x8, x9
-	cmp		w11, #2
-	blt		0f
-	// 2nd col
-	ins		v24.d[0], v2.d[1]
-	str		d24, [x8, #8]
-	str		q3, [x8, #16]
-	stp		q10, q11, [x8, #32]
-	str		d18, [x8, #64]
-	add		x8, x8, x9
-	cmp		w11, #3
-	blt		0f
-	// 3rd col
-	str		q5, [x8, #16]
-	stp		q12, q13, [x8, #32]
-	str		d20, [x8, #64]
-	add		x8, x8, x9
-	cmp		w11, #3
-	beq		0f
-	// 4th col
-	ins		v25.d[0], v7.d[1]
-	str		d25, [x8, #24]
-	stp		q14, q15, [x8, #32]
-	str		d22, [x8, #64]
-//	b		0f
 
 0:
 
@@ -3323,8 +3209,46 @@
 #endif
 
 	cmp		w10, #12
-	blt		1f
+	bge		1f
 
+	mov		x12, x8
+
+	ldp		q24, q25, [x12, #64]
+	add		x12, x12, x9
+	ldp		q26, q27, [x12, #64]
+	add		x12, x12, x9
+	ldp		q28, q29, [x12, #64]
+	add		x12, x12, x9
+	ldp		q30, q31, [x12, #64]
+
+	// 4th row
+	ins		v17.d[1], v25.d[1]
+	ins		v19.d[1], v27.d[1]
+	ins		v21.d[1], v29.d[1]
+	ins		v23.d[1], v31.d[1]
+	cmp		w10, #11
+	bge		1f
+	// 3th row
+	ins		v17.d[0], v25.d[0]
+	ins		v19.d[0], v27.d[0]
+	ins		v21.d[0], v29.d[0]
+	ins		v23.d[0], v31.d[0]
+	cmp		w10, #10
+	bge		1f
+	// 2nd row
+	ins		v16.d[1], v24.d[1]
+	ins		v18.d[1], v26.d[1]
+	ins		v20.d[1], v28.d[1]
+	ins		v22.d[1], v30.d[1]
+	cmp		w10, #9
+	bge		1f
+	// 1st row
+	ins		v16.d[0], v24.d[0]
+	ins		v18.d[0], v26.d[0]
+	ins		v20.d[0], v28.d[0]
+	ins		v22.d[0], v30.d[0]
+
+1:
 	// 1st col
 	stp		q0, q1, [x8, #0]
 	stp		q8, q9, [x8, #32]
@@ -3351,102 +3275,6 @@
 	stp		q6, q7, [x8, #0]
 	stp		q14, q15, [x8, #32]
 	stp		q22, q23, [x8, #64]
-	b		0f
-
-1:
-	cmp		w10, #11
-	blt		1f
-
-	// 1st col
-	stp		q0, q1, [x8, #0]
-	stp		q8, q9, [x8, #32]
-	str		d16, [x8, #64]
-	add		x8, x8, x9
-	cmp		w11, #2
-	blt		0f
-	// 2nd col
-	stp		q2, q3, [x8, #0]
-	stp		q10, q11, [x8, #32]
-	str		q18, [x8, #64]
-	add		x8, x8, x9
-	cmp		w11, #3
-	blt		0f
-	// 3rd col
-	stp		q4, q5, [x8, #0]
-	stp		q12, q13, [x8, #32]
-	str		q20, [x8, #64]
-	str		d21, [x8, #80]
-	add		x8, x8, x9
-	cmp		w11, #3
-	beq		0f
-	// 4th col
-	stp		q6, q7, [x8, #0]
-	stp		q14, q15, [x8, #32]
-	str		q22, [x8, #64]
-	str		d23, [x8, #80]
-	b		0f
-
-1:
-	cmp		w10, #10
-	blt		1f
-
-	// 1st col
-	stp		q0, q1, [x8, #0]
-	stp		q8, q9, [x8, #32]
-	str		d16, [x8, #64]
-	add		x8, x8, x9
-	cmp		w11, #2
-	blt		0f
-	// 2nd col
-	stp		q2, q3, [x8, #0]
-	stp		q10, q11, [x8, #32]
-	str		q18, [x8, #64]
-	add		x8, x8, x9
-	cmp		w11, #3
-	blt		0f
-	// 3rd col
-	stp		q4, q5, [x8, #0]
-	stp		q12, q13, [x8, #32]
-	str		q20, [x8, #64]
-	add		x8, x8, x9
-	cmp		w11, #3
-	beq		0f
-	// 4th col
-	stp		q6, q7, [x8, #0]
-	stp		q14, q15, [x8, #32]
-	str		q22, [x8, #64]
-	b		0f
-
-1:
-//	cmp		w10, #9
-//	blt		0f
-
-	// 1st col
-	stp		q0, q1, [x8, #0]
-	stp		q8, q9, [x8, #32]
-	str		d16, [x8, #64]
-	add		x8, x8, x9
-	cmp		w11, #2
-	blt		0f
-	// 2nd col
-	stp		q2, q3, [x8, #0]
-	stp		q10, q11, [x8, #32]
-	str		d18, [x8, #64]
-	add		x8, x8, x9
-	cmp		w11, #3
-	blt		0f
-	// 3rd col
-	stp		q4, q5, [x8, #0]
-	stp		q12, q13, [x8, #32]
-	str		d20, [x8, #64]
-	add		x8, x8, x9
-	cmp		w11, #3
-	beq		0f
-	// 4th col
-	stp		q6, q7, [x8, #0]
-	stp		q14, q15, [x8, #32]
-	str		d22, [x8, #64]
-//	b		0f
 
 0:
 
@@ -3505,8 +3333,7 @@
 // void kernel_dgemm_nt_12x4_lib44cc(int kmax, double *alpha, double *A, int sda, double *B, double *beta, double *C, int ldc, double *D, int ldd)
 
 	.align	4
-	GLOB(kernel_dgemm_nt_12x4_lib44cc)
-	FUN_START(kernel_dgemm_nt_12x4_lib44cc)
+	GLOB_FUN_START(kernel_dgemm_nt_12x4_lib44cc)
 	
 
 
@@ -3531,7 +3358,7 @@
 #if MACRO_LEVEL>=1
 	INNER_PREFETCH_12X4_LIB
 #else
-	CALL(inner_prefetch_12x4_lib)
+	bl inner_prefetch_12x4_lib
 #endif
 
 100:
@@ -3547,7 +3374,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_12X4_LIB4
 #else
-	CALL(inner_kernel_gemm_add_nt_12x4_lib4)
+	bl	inner_kernel_gemm_add_nt_12x4_lib4
 #endif
 
 
@@ -3560,7 +3387,7 @@
 #if MACRO_LEVEL>=1
 	INNER_PREFETCH_12X4_LIB
 #else
-	CALL(inner_prefetch_12x4_lib)
+	bl inner_prefetch_12x4_lib
 #endif
 
 
@@ -3575,7 +3402,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_12X4_LIB
 #else
-	CALL(inner_scale_ab_12x4_lib)
+	bl inner_scale_ab_12x4_lib
 #endif
 
 
@@ -3588,7 +3415,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_12X4_LIB
 #else
-	CALL(inner_store_12x4_lib)
+	bl inner_store_12x4_lib
 #endif
 
 
@@ -3609,8 +3436,7 @@
 // void kernel_dgemm_nt_12x4_vs_lib44cc(int kmax, double *alpha, double *A, int sda, double *B, double *beta, double *C, int ldc, double *D, int ldd, int m1, int n1)
 
 	.align	4
-	GLOB(kernel_dgemm_nt_12x4_vs_lib44cc)
-	FUN_START(kernel_dgemm_nt_12x4_vs_lib44cc)
+	GLOB_FUN_START(kernel_dgemm_nt_12x4_vs_lib44cc)
 	
 
 
@@ -3632,7 +3458,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_12X4_LIB4
 #else
-	CALL(inner_kernel_gemm_add_nt_12x4_lib4)
+	bl	inner_kernel_gemm_add_nt_12x4_lib4
 #endif
 
 
@@ -3649,7 +3475,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_12X4_VS_LIB
 #else
-	CALL(inner_scale_ab_12x4_vs_lib)
+	bl inner_scale_ab_12x4_vs_lib
 #endif
 
 
@@ -3664,7 +3490,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_12X4_VS_LIB
 #else
-	CALL(inner_store_12x4_vs_lib)
+	bl inner_store_12x4_vs_lib
 #endif
 
 
@@ -3685,8 +3511,7 @@
 // void kernel_dgemm_nn_12x4_lib4ccc(int kmax, double *alpha, double *A, int sda, double *B, int ldb, double *beta, double *C, int ldc, double *D, int ldd)
 
 	.align	4
-	GLOB(kernel_dgemm_nn_12x4_lib4ccc)
-	FUN_START(kernel_dgemm_nn_12x4_lib4ccc)
+	GLOB_FUN_START(kernel_dgemm_nn_12x4_lib4ccc)
 	
 
 
@@ -3710,7 +3535,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NN_12X4_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nn_12x4_lib4c)
+	bl	inner_kernel_gemm_add_nn_12x4_lib4c
 #endif
 
 
@@ -3723,7 +3548,7 @@
 #if MACRO_LEVEL>=1
 	INNER_PREFETCH_12X4_LIB
 #else
-	CALL(inner_prefetch_12x4_lib)
+	bl inner_prefetch_12x4_lib
 #endif
 
 
@@ -3738,7 +3563,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_12X4_LIB
 #else
-	CALL(inner_scale_ab_12x4_lib)
+	bl inner_scale_ab_12x4_lib
 #endif
 
 
@@ -3751,7 +3576,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_12X4_LIB
 #else
-	CALL(inner_store_12x4_lib)
+	bl inner_store_12x4_lib
 #endif
 
 
@@ -3772,8 +3597,7 @@
 // void kernel_dgemm_nn_12x4_vs_lib4ccc(int kmax, double *alpha, double *A, int sda, double *B, int ldb, double *beta, double *C, int ldc, double *D, int ldd, int m1, int n1)
 
 	.align	4
-	GLOB(kernel_dgemm_nn_12x4_vs_lib4ccc)
-	FUN_START(kernel_dgemm_nn_12x4_vs_lib4ccc)
+	GLOB_FUN_START(kernel_dgemm_nn_12x4_vs_lib4ccc)
 	
 
 
@@ -3801,7 +3625,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NN_12X1_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nn_12x1_lib4c)
+	bl	inner_kernel_gemm_add_nn_12x1_lib4c
 #endif
 
 	b		103f
@@ -3815,7 +3639,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NN_12X2_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nn_12x2_lib4c)
+	bl	inner_kernel_gemm_add_nn_12x2_lib4c
 #endif
 	
 	b		103f
@@ -3829,7 +3653,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NN_12X3_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nn_12x3_lib4c)
+	bl	inner_kernel_gemm_add_nn_12x3_lib4c
 #endif
 	
 	b		103f
@@ -3839,7 +3663,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NN_12X4_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nn_12x4_lib4c)
+	bl	inner_kernel_gemm_add_nn_12x4_lib4c
 #endif
 
 103:
@@ -3855,7 +3679,7 @@
 #if MACRO_LEVEL>=1
 //	INNER_PREFETCH_12X4_LIB
 #else
-//	CALL(inner_prefetch_12x4_lib)
+//	bl inner_prefetch_12x4_lib
 #endif
 
 
@@ -3872,7 +3696,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_12X4_VS_LIB
 #else
-	CALL(inner_scale_ab_12x4_vs_lib)
+	bl inner_scale_ab_12x4_vs_lib
 #endif
 
 
@@ -3887,7 +3711,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_12X4_VS_LIB
 #else
-	CALL(inner_store_12x4_vs_lib)
+	bl inner_store_12x4_vs_lib
 #endif
 
 
@@ -3908,8 +3732,7 @@
 // void kernel_dsyrk_nt_l_12x4_lib44cc(int kmax, double *alpha, double *A, int sda, double *B, double *beta, double *C, int ldc, double *D, int ldd)
 
 	.align	4
-	GLOB(kernel_dsyrk_nt_l_12x4_lib44cc)
-	FUN_START(kernel_dsyrk_nt_l_12x4_lib44cc)
+	GLOB_FUN_START(kernel_dsyrk_nt_l_12x4_lib44cc)
 	
 
 
@@ -3931,7 +3754,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_12X4_LIB4
 #else
-	CALL(inner_kernel_gemm_add_nt_12x4_lib4)
+	bl	inner_kernel_gemm_add_nt_12x4_lib4
 #endif
 
 
@@ -3946,7 +3769,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_12X4_LIB
 #else
-	CALL(inner_scale_ab_12x4_lib)
+	bl inner_scale_ab_12x4_lib
 #endif
 
 
@@ -3959,7 +3782,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_L_12X4_LIB
 #else
-	CALL(inner_store_l_12x4_lib)
+	bl inner_store_l_12x4_lib
 #endif
 
 
@@ -3980,8 +3803,7 @@
 // void kernel_dsyrk_nt_l_12x4_vs_lib44cc(int kmax, double *alpha, double *A, int sda, double *B, double *beta, double *C, int ldc, double *D, int ldd, int m1, int n1)
 
 	.align	4
-	GLOB(kernel_dsyrk_nt_l_12x4_vs_lib44cc)
-	FUN_START(kernel_dsyrk_nt_l_12x4_vs_lib44cc)
+	GLOB_FUN_START(kernel_dsyrk_nt_l_12x4_vs_lib44cc)
 	
 
 
@@ -4003,7 +3825,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_12X4_LIB4
 #else
-	CALL(inner_kernel_gemm_add_nt_12x4_lib4)
+	bl	inner_kernel_gemm_add_nt_12x4_lib4
 #endif
 
 
@@ -4020,7 +3842,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_12X4_VS_LIB
 #else
-	CALL(inner_scale_ab_12x4_vs_lib)
+	bl inner_scale_ab_12x4_vs_lib
 #endif
 
 
@@ -4035,7 +3857,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_L_12X4_VS_LIB
 #else
-	CALL(inner_store_l_12x4_vs_lib)
+	bl inner_store_l_12x4_vs_lib
 #endif
 
 
@@ -4056,8 +3878,7 @@
 // void kernel_dsyrk_nt_u_12x4_lib44cc(int kmax, double *alpha, double *A, int sda, double *B, double *beta, double *C, int ldc, double *D, int ldd)
 
 	.align	4
-	GLOB(kernel_dsyrk_nt_u_12x4_lib44cc)
-	FUN_START(kernel_dsyrk_nt_u_12x4_lib44cc)
+	GLOB_FUN_START(kernel_dsyrk_nt_u_12x4_lib44cc)
 	
 
 
@@ -4079,7 +3900,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_12X4_LIB4
 #else
-	CALL(inner_kernel_gemm_add_nt_12x4_lib4)
+	bl	inner_kernel_gemm_add_nt_12x4_lib4
 #endif
 
 
@@ -4094,7 +3915,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_12X4_LIB
 #else
-	CALL(inner_scale_ab_12x4_lib)
+	bl inner_scale_ab_12x4_lib
 #endif
 
 
@@ -4107,7 +3928,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_U_12X4_LIB
 #else
-	CALL(inner_store_u_12x4_lib)
+	bl inner_store_u_12x4_lib
 #endif
 
 
@@ -4128,8 +3949,7 @@
 // void kernel_dsyrk_nt_u_12x4_vs_lib44cc(int kmax, double *alpha, double *A, int sda, double *B, double *beta, double *C, int ldc, double *D, int ldd, int m1, int n1)
 
 	.align	4
-	GLOB(kernel_dsyrk_nt_u_12x4_vs_lib44cc)
-	FUN_START(kernel_dsyrk_nt_u_12x4_vs_lib44cc)
+	GLOB_FUN_START(kernel_dsyrk_nt_u_12x4_vs_lib44cc)
 	
 
 
@@ -4151,7 +3971,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_12X4_LIB4
 #else
-	CALL(inner_kernel_gemm_add_nt_12x4_lib4)
+	bl	inner_kernel_gemm_add_nt_12x4_lib4
 #endif
 
 
@@ -4168,7 +3988,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_12X4_VS_LIB
 #else
-	CALL(inner_scale_ab_12x4_vs_lib)
+	bl inner_scale_ab_12x4_vs_lib
 #endif
 
 
@@ -4183,7 +4003,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_U_12X4_VS_LIB
 #else
-	CALL(inner_store_u_12x4_vs_lib)
+	bl inner_store_u_12x4_vs_lib
 #endif
 
 
@@ -4204,8 +4024,7 @@
 // void kernel_dtrsm_nt_rl_inv_12x4_lib44ccc(int kmax, double *A, int sda, double *B, double *C, int ldc, double *D, int ldd, double *E, int lde, double *inv_diag_E)
 
 	.align	4
-	GLOB(kernel_dtrsm_nt_rl_inv_12x4_lib44ccc)
-	FUN_START(kernel_dtrsm_nt_rl_inv_12x4_lib44ccc)
+	GLOB_FUN_START(kernel_dtrsm_nt_rl_inv_12x4_lib44ccc)
 	
 
 
@@ -4227,7 +4046,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_12X4_LIB4
 #else
-	CALL(inner_kernel_gemm_add_nt_12x4_lib4)
+	bl	inner_kernel_gemm_add_nt_12x4_lib4
 #endif
 
 
@@ -4240,7 +4059,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_M11_12X4_LIB
 #else
-	CALL(inner_scale_m11_12x4_lib)
+	bl inner_scale_m11_12x4_lib
 #endif
 
 
@@ -4254,7 +4073,7 @@
 #if MACRO_LEVEL>=1
 	INNER_EDGE_TRSM_RLT_INV_12X4_LIB
 #else
-	CALL(inner_edge_trsm_rlt_inv_12x4_lib)
+	bl inner_edge_trsm_rlt_inv_12x4_lib
 #endif
 
 
@@ -4267,7 +4086,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_12X4_LIB
 #else
-	CALL(inner_store_12x4_lib)
+	bl inner_store_12x4_lib
 #endif
 
 
@@ -4288,8 +4107,7 @@
 // void kernel_dtrsm_nt_rl_inv_12x4_vs_lib44ccc(int kmax, double *A, int sda, double *B, double *C, int ldc, double *D, int ldd, double *E, int lde, double *inv_diag_E, int m1, int n1)
 
 	.align	4
-	GLOB(kernel_dtrsm_nt_rl_inv_12x4_vs_lib44ccc)
-	FUN_START(kernel_dtrsm_nt_rl_inv_12x4_vs_lib44ccc)
+	GLOB_FUN_START(kernel_dtrsm_nt_rl_inv_12x4_vs_lib44ccc)
 	
 
 
@@ -4311,7 +4129,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_12X4_LIB4
 #else
-	CALL(inner_kernel_gemm_add_nt_12x4_lib4)
+	bl	inner_kernel_gemm_add_nt_12x4_lib4
 #endif
 
 
@@ -4326,7 +4144,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_M11_12X4_VS_LIB
 #else
-	CALL(inner_scale_m11_12x4_vs_lib)
+	bl inner_scale_m11_12x4_vs_lib
 #endif
 
 
@@ -4341,7 +4159,7 @@
 #if MACRO_LEVEL>=1
 	INNER_EDGE_TRSM_RLT_INV_12X4_VS_LIB
 #else
-	CALL(inner_edge_trsm_rlt_inv_12x4_vs_lib)
+	bl inner_edge_trsm_rlt_inv_12x4_vs_lib
 #endif
 
 
@@ -4356,7 +4174,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_12X4_VS_LIB
 #else
-	CALL(inner_store_12x4_vs_lib)
+	bl inner_store_12x4_vs_lib
 #endif
 
 
@@ -4373,183 +4191,11 @@
 
 
 
-//                                          w0        x1         w2       x3         x4            x5         w6       x7         sp+0     sp+8       sp+16
-// void kernel_dtrsm_nt_rl_inv_12x4_lib44cc4(int kmax, double *A, int sda, double *B, double *beta, double *C, int ldc, double *D, int ldd, double *E, double *inv_diag_E)
-
-	.align	4
-	GLOB(kernel_dtrsm_nt_rl_inv_12x4_lib44cc4)
-	FUN_START(kernel_dtrsm_nt_rl_inv_12x4_lib44cc4)
-	
-
-
-	PROLOGUE
-
-
-
-	ZERO_ACC
-
-
-
-	// call inner kernel gemm nt
-	mov		w8, w0 // kmax
-	mov		x9, x1 // A
-	mov		w10, w2 // sda
-	lsl		w10, w10, #5 // 32*sda
-	mov		x11, x3 // B
-
-#if MACRO_LEVEL>=2
-	INNER_KERNEL_GEMM_ADD_NT_12X4_LIB4
-#else
-	CALL(inner_kernel_gemm_add_nt_12x4_lib4)
-#endif
-
-
-
-	// call inner blend for alpha=1.0 and beta
-	mov		x8, x4 // beta
-	mov		x9, x5 // C
-	mov		w10, w6 // ldc
-	lsl		w10, w10, #3 // 8*ldc
-
-#if MACRO_LEVEL>=1
-	INNER_SCALE_M1B_12X4_LIB
-#else
-	CALL(inner_scale_m1b_12x4_lib)
-#endif
-
-
-
-	// solution
-	ldr		x8, [sp, #(STACKSIZE + 8)] // E
-	ldr		x9, [sp, #(STACKSIZE + 16)] // inv_diag_E
-
-#if MACRO_LEVEL>=1
-	INNER_EDGE_TRSM_RLT_INV_12X4_LIB4
-#else
-	CALL(inner_edge_trsm_rlt_inv_12x4_lib4)
-#endif
-
-
-
-	// store l
-	mov		x8, x7 // D
-	ldr		w9, [sp, #(STACKSIZE + 0)] // ldd
-	lsl		w9, w9, #3 // 8*ldd
-
-#if MACRO_LEVEL>=1
-	INNER_STORE_12X4_LIB
-#else
-	CALL(inner_store_12x4_lib)
-#endif
-
-
-
-	EPILOGUE
-
-	mov	x0, #0
-
-	ret
-
-	FUN_END(kernel_dtrsm_nt_rl_inv_12x4_lib44cc4)
-
-
-
-
-
-//                                             w0        x1         w2       x3         x4            x5         w6       x7         sp+0     sp+8       sp+16               sp+24   sp+32
-// void kernel_dtrsm_nt_rl_inv_12x4_vs_lib44cc4(int kmax, double *A, int sda, double *B, double *beta, double *C, int ldc, double *D, int ldd, double *E, double *inv_diag_E, int m1, int n1)
-
-	.align	4
-	GLOB(kernel_dtrsm_nt_rl_inv_12x4_vs_lib44cc4)
-	FUN_START(kernel_dtrsm_nt_rl_inv_12x4_vs_lib44cc4)
-	
-
-
-	PROLOGUE
-
-
-
-	ZERO_ACC
-
-
-
-	// call inner kernel gemm nt
-	mov		w8, w0 // kmax
-	mov		x9, x1 // A
-	mov		w10, w2 // sda
-	lsl		w10, w10, #5 // 32*sda
-	mov		x11, x3 // B
-
-#if MACRO_LEVEL>=2
-	INNER_KERNEL_GEMM_ADD_NT_12X4_LIB4
-#else
-	CALL(inner_kernel_gemm_add_nt_12x4_lib4)
-#endif
-
-
-
-	// call inner blend for alpha=1.0 and beta=1.0
-	mov		x8, x4 // beta
-	mov		x9, x5 // C
-	mov		w10, w6 // ldc
-	lsl		w10, w10, #3 // 8*ldc
-	ldr		w11, [sp, #(STACKSIZE + 24)] // m1
-	ldr		w12, [sp, #(STACKSIZE + 32)] // n1
-
-#if MACRO_LEVEL>=1
-	INNER_SCALE_M1B_12X4_VS_LIB
-#else
-	CALL(inner_scale_m1b_12x4_vs_lib)
-#endif
-
-
-
-	// solution
-	ldr		x8, [sp, #(STACKSIZE + 8)] // E
-	ldr		x9, [sp, #(STACKSIZE + 16)] // inv_diag_E
-	ldr		w10, [sp, #(STACKSIZE + 32)] // n1
-
-#if MACRO_LEVEL>=1
-	INNER_EDGE_TRSM_RLT_INV_12X4_VS_LIB4
-#else
-	CALL(inner_edge_trsm_rlt_inv_12x4_vs_lib4)
-#endif
-
-
-
-	// store l
-	mov		x8, x7 // D
-	ldr		w9, [sp, #(STACKSIZE + 0)] // ldd
-	lsl		w9, w9, #3 // 8*ldd
-	ldr		w10, [sp, #(STACKSIZE + 24)] // m1
-	ldr		w11, [sp, #(STACKSIZE + 32)] // n1
-
-#if MACRO_LEVEL>=1
-	INNER_STORE_12X4_VS_LIB
-#else
-	CALL(inner_store_12x4_vs_lib)
-#endif
-
-
-
-	EPILOGUE
-
-	mov	x0, #0
-
-	ret
-
-	FUN_END(kernel_dtrsm_nt_rl_inv_12x4_vs_lib44cc4)
-
-
-
-
-
 //                                          w0        x1         w2       x3         x4            x5         w6       x7         sp+0     sp+8
 // void kernel_dtrsm_nt_rl_one_12x4_lib44cc4(int kmax, double *A, int sda, double *B, double *beta, double *C, int ldc, double *D, int ldd, double *E)
 
 	.align	4
-	GLOB(kernel_dtrsm_nt_rl_one_12x4_lib44cc4)
-	FUN_START(kernel_dtrsm_nt_rl_one_12x4_lib44cc4)
+	GLOB_FUN_START(kernel_dtrsm_nt_rl_one_12x4_lib44cc4)
 	
 
 
@@ -4571,7 +4217,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_12X4_LIB4
 #else
-	CALL(inner_kernel_gemm_add_nt_12x4_lib4)
+	bl	inner_kernel_gemm_add_nt_12x4_lib4
 #endif
 
 
@@ -4585,7 +4231,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_M1B_12X4_LIB
 #else
-	CALL(inner_scale_m1b_12x4_lib)
+	bl inner_scale_m1b_12x4_lib
 #endif
 
 
@@ -4596,7 +4242,7 @@
 #if MACRO_LEVEL>=1
 	INNER_EDGE_TRSM_RLT_ONE_12X4_LIB4
 #else
-	CALL(inner_edge_trsm_rlt_one_12x4_lib4)
+	bl inner_edge_trsm_rlt_one_12x4_lib4
 #endif
 
 
@@ -4609,7 +4255,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_12X4_LIB
 #else
-	CALL(inner_store_12x4_lib)
+	bl inner_store_12x4_lib
 #endif
 
 
@@ -4630,8 +4276,7 @@
 // void kernel_dtrsm_nt_rl_one_12x4_vs_lib44cc4(int kmax, double *A, int sda, double *B, double *beta, double *C, int ldc, double *D, int ldd, double *E, int m1, int n1)
 
 	.align	4
-	GLOB(kernel_dtrsm_nt_rl_one_12x4_vs_lib44cc4)
-	FUN_START(kernel_dtrsm_nt_rl_one_12x4_vs_lib44cc4)
+	GLOB_FUN_START(kernel_dtrsm_nt_rl_one_12x4_vs_lib44cc4)
 	
 
 
@@ -4653,7 +4298,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_12X4_LIB4
 #else
-	CALL(inner_kernel_gemm_add_nt_12x4_lib4)
+	bl	inner_kernel_gemm_add_nt_12x4_lib4
 #endif
 
 
@@ -4669,7 +4314,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_M1B_12X4_VS_LIB
 #else
-	CALL(inner_scale_m1b_12x4_vs_lib)
+	bl inner_scale_m1b_12x4_vs_lib
 #endif
 
 
@@ -4681,7 +4326,7 @@
 #if MACRO_LEVEL>=1
 	INNER_EDGE_TRSM_RLT_ONE_12X4_VS_LIB4
 #else
-	CALL(inner_edge_trsm_rlt_one_12x4_vs_lib4)
+	bl inner_edge_trsm_rlt_one_12x4_vs_lib4
 #endif
 
 
@@ -4696,7 +4341,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_12X4_VS_LIB
 #else
-	CALL(inner_store_12x4_vs_lib)
+	bl inner_store_12x4_vs_lib
 #endif
 
 
@@ -4717,8 +4362,7 @@
 // void kernel_dpotrf_nt_l_12x4_lib44cc(int kmax, double *A, int sda, double *B, double *C, int ldc, double *D, int ldd, double *inv_diag_D)
 
 	.align	4
-	GLOB(kernel_dpotrf_nt_l_12x4_lib44cc)
-	FUN_START(kernel_dpotrf_nt_l_12x4_lib44cc)
+	GLOB_FUN_START(kernel_dpotrf_nt_l_12x4_lib44cc)
 	
 
 
@@ -4740,7 +4384,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_12X4_LIB4
 #else
-	CALL(inner_kernel_gemm_add_nt_12x4_lib4)
+	bl	inner_kernel_gemm_add_nt_12x4_lib4
 #endif
 
 
@@ -4753,7 +4397,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_M11_12X4_LIB
 #else
-	CALL(inner_scale_m11_12x4_lib)
+	bl inner_scale_m11_12x4_lib
 #endif
 
 
@@ -4764,7 +4408,7 @@
 #if MACRO_LEVEL>=1
 	INNER_EDGE_POTRF_12X4_LIB4
 #else
-	CALL(inner_edge_potrf_12x4_lib4)
+	bl inner_edge_potrf_12x4_lib4
 #endif
 
 
@@ -4777,7 +4421,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_L_12X4_LIB
 #else
-	CALL(inner_store_l_12x4_lib)
+	bl inner_store_l_12x4_lib
 #endif
 
 
@@ -4798,8 +4442,7 @@
 // void kernel_dpotrf_nt_l_12x4_vs_lib44cc(int kmax, double *A, int sda, double *B, double *C, int ldc, double *D, int ldd, double *inv_diag_D, int m1, int n1)
 
 	.align	4
-	GLOB(kernel_dpotrf_nt_l_12x4_vs_lib44cc)
-	FUN_START(kernel_dpotrf_nt_l_12x4_vs_lib44cc)
+	GLOB_FUN_START(kernel_dpotrf_nt_l_12x4_vs_lib44cc)
 	
 
 
@@ -4821,7 +4464,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_12X4_LIB4
 #else
-	CALL(inner_kernel_gemm_add_nt_12x4_lib4)
+	bl	inner_kernel_gemm_add_nt_12x4_lib4
 #endif
 
 
@@ -4836,7 +4479,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_M11_12X4_VS_LIB
 #else
-	CALL(inner_scale_m11_12x4_vs_lib)
+	bl inner_scale_m11_12x4_vs_lib
 #endif
 
 
@@ -4848,7 +4491,7 @@
 #if MACRO_LEVEL>=1
 	INNER_EDGE_POTRF_12X4_VS_LIB4
 #else
-	CALL(inner_edge_potrf_12x4_vs_lib4)
+	bl inner_edge_potrf_12x4_vs_lib4
 #endif
 
 
@@ -4863,7 +4506,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_L_12X4_VS_LIB
 #else
-	CALL(inner_store_l_12x4_vs_lib)
+	bl inner_store_l_12x4_vs_lib
 #endif
 
 
@@ -4884,8 +4527,7 @@
 // void kernel_dtrsm_nn_ll_one_12x4_lib4cccc(int kmax, double *A, int sda, double *B, int ldb, double *beta, double *C, int ldc, double *D, int ldd, double *E, int lde)
 
 	.align	4
-	GLOB(kernel_dtrsm_nn_ll_one_12x4_lib4cccc)
-	FUN_START(kernel_dtrsm_nn_ll_one_12x4_lib4cccc)
+	GLOB_FUN_START(kernel_dtrsm_nn_ll_one_12x4_lib4cccc)
 	
 
 
@@ -4909,7 +4551,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NN_12X4_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nn_12x4_lib4c)
+	bl	inner_kernel_gemm_add_nn_12x4_lib4c
 #endif
 
 
@@ -4923,7 +4565,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_M1B_12X4_LIB
 #else
-	CALL(inner_scale_m1b_12x4_lib)
+	bl inner_scale_m1b_12x4_lib
 #endif
 
 
@@ -4936,7 +4578,7 @@
 #if MACRO_LEVEL>=1
 	INNER_EDGE_TRSM_LLN_ONE_12X4_LIB
 #else
-	CALL(inner_edge_trsm_lln_one_12x4_lib)
+	bl inner_edge_trsm_lln_one_12x4_lib
 #endif
 
 
@@ -4949,7 +4591,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_12X4_LIB
 #else
-	CALL(inner_store_12x4_lib)
+	bl inner_store_12x4_lib
 #endif
 
 
@@ -4972,8 +4614,7 @@
 // void kernel_dtrsm_nn_ll_one_12x4_vs_lib4cccc(int kmax, double *A, int sda, double *B, int ldb, double *beta, double *C, int ldc, double *D, int ldd, double *E, int lde, int m1, int n1)
 
 	.align	4
-	GLOB(kernel_dtrsm_nn_ll_one_12x4_vs_lib4cccc)
-	FUN_START(kernel_dtrsm_nn_ll_one_12x4_vs_lib4cccc)
+	GLOB_FUN_START(kernel_dtrsm_nn_ll_one_12x4_vs_lib4cccc)
 	
 
 
@@ -5001,7 +4642,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NN_12X1_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nn_12x1_lib4c)
+	bl	inner_kernel_gemm_add_nn_12x1_lib4c
 #endif
 
 	b		103f
@@ -5015,7 +4656,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NN_12X2_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nn_12x2_lib4c)
+	bl	inner_kernel_gemm_add_nn_12x2_lib4c
 #endif
 	
 	b		103f
@@ -5029,7 +4670,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NN_12X3_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nn_12x3_lib4c)
+	bl	inner_kernel_gemm_add_nn_12x3_lib4c
 #endif
 	
 	b		103f
@@ -5039,7 +4680,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NN_12X4_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nn_12x4_lib4c)
+	bl	inner_kernel_gemm_add_nn_12x4_lib4c
 #endif
 
 103:
@@ -5057,7 +4698,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_M1B_12X4_VS_LIB
 #else
-	CALL(inner_scale_m1b_12x4_vs_lib)
+	bl inner_scale_m1b_12x4_vs_lib
 #endif
 
 
@@ -5070,7 +4711,7 @@
 #if MACRO_LEVEL>=1
 	INNER_EDGE_TRSM_LLN_ONE_12X4_LIB
 #else
-	CALL(inner_edge_trsm_lln_one_12x4_lib)
+	bl inner_edge_trsm_lln_one_12x4_lib
 #endif
 
 
@@ -5085,7 +4726,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_12X4_VS_LIB
 #else
-	CALL(inner_store_12x4_vs_lib)
+	bl inner_store_12x4_vs_lib
 #endif
 
 

@@ -35,7 +35,7 @@
 
 
 
-#include <blasfeo_d_kernel.h>
+#include "../../include/blasfeo_d_kernel.h"
 
 
 
@@ -103,20 +103,10 @@ void kernel_dgemv_n_4_lib4(int kmax, double *alpha, double *A, double *x, double
 
 		}
 
-	if(beta[0]==0.0)
-		{
-		z[0] = alpha[0]*yy[0];
-		z[1] = alpha[0]*yy[1];
-		z[2] = alpha[0]*yy[2];
-		z[3] = alpha[0]*yy[3];
-		}
-	else
-		{
-		z[0] = alpha[0]*yy[0] + beta[0]*y[0];
-		z[1] = alpha[0]*yy[1] + beta[0]*y[1];
-		z[2] = alpha[0]*yy[2] + beta[0]*y[2];
-		z[3] = alpha[0]*yy[3] + beta[0]*y[3];
-		}
+	z[0] = alpha[0]*yy[0] + beta[0]*y[0];
+	z[1] = alpha[0]*yy[1] + beta[0]*y[1];
+	z[2] = alpha[0]*yy[2] + beta[0]*y[2];
+	z[3] = alpha[0]*yy[3] + beta[0]*y[3];
 
 	return;
 
@@ -252,20 +242,10 @@ void kernel_dgemv_t_4_lib4(int kmax, double *alpha, int offA, double *A, int sda
 		
 		}
 
-	if(beta[0]==0.0)
-		{
-		z[0] = alpha[0]*yy[0];
-		z[1] = alpha[0]*yy[1];
-		z[2] = alpha[0]*yy[2];
-		z[3] = alpha[0]*yy[3];
-		}
-	else
-		{
-		z[0] = alpha[0]*yy[0] + beta[0]*y[0];
-		z[1] = alpha[0]*yy[1] + beta[0]*y[1];
-		z[2] = alpha[0]*yy[2] + beta[0]*y[2];
-		z[3] = alpha[0]*yy[3] + beta[0]*y[3];
-		}
+	z[0] = alpha[0]*yy[0] + beta[0]*y[0];
+	z[1] = alpha[0]*yy[1] + beta[0]*y[1];
+	z[2] = alpha[0]*yy[2] + beta[0]*y[2];
+	z[3] = alpha[0]*yy[3] + beta[0]*y[3];
 
 	return;
 
@@ -1611,10 +1591,5 @@ void kernel_dtrmv_ut_4_lib4(int kmax, double *A, int sda, double *x, double *z)
 
 
 
-//#if defined(BLAS_API)
-#if ( defined(BLAS_API) | ( defined(LA_HIGH_PERFORMANCE) & defined(MF_COLMAJ) ) )
 
-#include "kernel_dgemv_4_lib.c"
-
-#endif
 

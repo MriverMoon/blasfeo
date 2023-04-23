@@ -46,17 +46,17 @@
 
 
 #if defined(FORTRAN_BLAS_API)
-#define blasfeo_blas_dtrsm dtrsm_
-#define blasfeo_lapack_dpotrs dpotrs_
+#define blas_dtrsm dtrsm_
+#define blas_dpotrs dpotrs_
 #endif
 
 
 
-void blasfeo_lapack_dpotrs(char *uplo, int *pm, int *pn, double *A, int *plda, double *B, int *pldb, int *info)
+void blas_dpotrs(char *uplo, int *pm, int *pn, double *A, int *plda, double *B, int *pldb, int *info)
 	{
 
 #if defined(PRINT_NAME)
-	printf("\nblasfeo_lapack_dpotrs %c %d %d %p %d %p %d %d\n", *uplo, *pm, *pn, A, *plda, B, *pldb, *info);
+	printf("\nblas_dpotrs %c %d %d %p %d %p %d %d\n", *uplo, *pm, *pn, A, *plda, B, *pldb, *info);
 #endif
 
 	int m = *pm;
@@ -77,13 +77,13 @@ void blasfeo_lapack_dpotrs(char *uplo, int *pm, int *pn, double *A, int *plda, d
 //	printf("\n%c\n", *uplo);
 	if(*uplo=='u' | *uplo=='U')
 		{
-		blasfeo_blas_dtrsm(&c_l, &c_u, &c_t, &c_n, pm, pn, &d_1, A, plda, B, pldb);
-		blasfeo_blas_dtrsm(&c_l, &c_u, &c_n, &c_n, pm, pn, &d_1, A, plda, B, pldb);
+		blas_dtrsm(&c_l, &c_u, &c_t, &c_n, pm, pn, &d_1, A, plda, B, pldb);
+		blas_dtrsm(&c_l, &c_u, &c_n, &c_n, pm, pn, &d_1, A, plda, B, pldb);
 		}
 	else
 		{
-		blasfeo_blas_dtrsm(&c_l, &c_l, &c_n, &c_n, pm, pn, &d_1, A, plda, B, pldb);
-		blasfeo_blas_dtrsm(&c_l, &c_l, &c_t, &c_n, pm, pn, &d_1, A, plda, B, pldb);
+		blas_dtrsm(&c_l, &c_l, &c_n, &c_n, pm, pn, &d_1, A, plda, B, pldb);
+		blas_dtrsm(&c_l, &c_l, &c_t, &c_n, pm, pn, &d_1, A, plda, B, pldb);
 		}
 
 	return;

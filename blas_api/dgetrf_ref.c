@@ -55,7 +55,7 @@
 #if defined(FORTRAN_BLAS_API)
 #define GETRF dgetrf_
 #else
-#define GETRF blasfeo_lapack_dgetrf
+#define GETRF blas_dgetrf
 #endif
 
 

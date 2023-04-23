@@ -53,23 +53,22 @@
 
 
 #if defined(FORTRAN_BLAS_API)
-#define blasfeo_blas_dcopy dcopy_
+#define blas_dcopy dcopy_
 #endif
 
 
 
-void blasfeo_blas_dcopy(int *pn, double *x, int *pincx, double *y, int *pincy)
+void blas_dcopy(int *pn, double *x, int *pincx, double *y, int *pincy)
 	{
 
 #if defined(PRINT_NAME)
-	printf("\nblasfeo_blas_dcopy %d %p %d %p %d\n", *pn, x, *pincx, y, *pincy);
+	printf("\nblas_dcopy %d %p %d %p %d\n", *pn, x, *pincx, y, *pincy);
 #endif
 
 	int n = *pn;
 	int incx = *pincx;
 	int incy = *pincy;
 
-	int ix, iy;
 	int ii;
 
 #if defined(TARGET_X64_INTEL_HASWELL) || defined(TARGET_X64_INTEL_SANDY_BRIDGE)
@@ -121,28 +120,12 @@ void blasfeo_blas_dcopy(int *pn, double *x, int *pincx, double *y, int *pincy)
 		}
 	else
 		{
-		if(incx<0)
-			{
-			ix = - (n-1) * incx;
-			}
-		else
-			{
-			ix = 0;
-			}
-		if(incy<0)
-			{
-			iy = - (n-1) * incy;
-			}
-		else
-			{
-			iy = 0;
-			}
 		ii = 0;
 		for(; ii<n; ii++)
 			{
-			y[iy] = x[ix];
-			ix += incx;
-			iy += incy;
+			y[0] = x[0];
+			x += incx;
+			y += incy;
 			}
 		}
 

@@ -138,9 +138,6 @@ adb_push:
 adb_run:
 	adb shell /data/local/tmp/$(ONE_OBJS).out
 
-sde_run:
-	~/sde/sde64 -- ./$(BINARY_DIR)/$(ONE_OBJS).out
-
 clean:
 	rm -rf ./*.o
 	rm -rf ./*.out

@@ -41,14 +41,14 @@
 
 
 
-//#if ( defined(BLAS_API) & defined(LA_HIGH_PERFORMANCE) )
-//#define HP_BLAS
-//#define HP_BLAS_DP
-//#define HP_GEMM_NN blas_hp_dgemm_nn
-//#define HP_GEMM_NT blas_hp_dgemm_nt
-//#define HP_GEMM_TN blas_hp_dgemm_tn
-//#define HP_GEMM_TT blas_hp_dgemm_tt
-//#endif
+#if ( defined(BLAS_API) & defined(LA_HIGH_PERFORMANCE) )
+#define HP_BLAS
+#define HP_BLAS_DP
+#define HP_GEMM_NN blas_hp_dgemm_nn
+#define HP_GEMM_NT blas_hp_dgemm_nt
+#define HP_GEMM_TN blas_hp_dgemm_tn
+#define HP_GEMM_TT blas_hp_dgemm_tt
+#endif
 
 
 
@@ -72,13 +72,13 @@
 #if defined(FORTRAN_BLAS_API)
 #define GEMM dgemm_
 #else
-#define GEMM blasfeo_blas_dgemm
+#define GEMM blas_dgemm
 #endif
 
 
 
-//#ifdef HP_BLAS
-//#include "../blasfeo_hp_cm/dgemm.c"
-//#endif
+#ifdef HP_BLAS
+#include "../blasfeo_hp_cm/dgemm.c"
+#endif
 
 #include "xgemm_ref.c"

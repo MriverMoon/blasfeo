@@ -64,9 +64,7 @@
 #define SYMV_L blasfeo_ssymv_l
 #define SYMV_L_MN blasfeo_ssymv_l_mn
 #define TRMV_LNN blasfeo_strmv_lnn
-#define TRMV_LNN_MN blasfeo_strmv_lnn_mn
 #define TRMV_LTN blasfeo_strmv_ltn
-#define TRMV_LTN_MN blasfeo_strmv_ltn_mn
 #define TRMV_UNN blasfeo_strmv_unn
 #define TRMV_UTN blasfeo_strmv_utn
 #define TRSV_LNN blasfeo_strsv_lnn
@@ -77,14 +75,12 @@
 #define TRSV_LTU blasfeo_strsv_ltu
 #define TRSV_UNN blasfeo_strsv_unn
 #define TRSV_UTN blasfeo_strsv_utn
-#define GER blasfeo_sger
 
 #define COPY scopy_
 #define GEMV sgemv_
 #define SYMV ssymv_
 #define TRMV strmv_
 #define TRSV strsv_
-#define GER_ sger_
 
 
 

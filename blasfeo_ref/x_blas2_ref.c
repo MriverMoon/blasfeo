@@ -35,7 +35,6 @@
 
 
 
-#if ! ( defined(HP_CM) & defined(DP) )
 void REF_GEMV_N(int m, int n, REAL alpha, struct XMAT *sA, int ai, int aj, struct XVEC *sx, int xi, REAL beta, struct XVEC *sy, int yi, struct XVEC *sz, int zi)
 	{
 	int ii, jj;
@@ -53,20 +52,6 @@ void REF_GEMV_N(int m, int n, REAL alpha, struct XMAT *sA, int ai, int aj, struc
 	REAL *y = sy->pa + yi;
 	REAL *z = sz->pa + zi;
 #if 1 // y reg version
-	if(beta==0.0)
-		{
-		for(ii=0; ii<m; ii++)
-			{
-			z[ii] = 0.0;
-			}
-		}
-	else
-		{
-		for(ii=0; ii<m; ii++)
-			{
-			z[ii] = beta * y[ii];
-			}
-		}
 	ii = 0;
 	for(; ii<m-1; ii+=2)
 		{
@@ -83,8 +68,8 @@ void REF_GEMV_N(int m, int n, REAL alpha, struct XMAT *sA, int ai, int aj, struc
 			y_0 += XMATEL_A(aai+ii+0, aaj+jj) * x[jj];
 			y_1 += XMATEL_A(aai+ii+1, aaj+jj) * x[jj];
 			}
-		z[ii+0] += alpha * y_0;
-		z[ii+1] += alpha * y_1;
+		z[ii+0] = beta * y[ii+0] + alpha * y_0;
+		z[ii+1] = beta * y[ii+1] + alpha * y_1;
 		}
 	for(; ii<m; ii++)
 		{
@@ -93,22 +78,12 @@ void REF_GEMV_N(int m, int n, REAL alpha, struct XMAT *sA, int ai, int aj, struc
 			{
 			y_0 += XMATEL_A(aai+ii, aaj+jj) * x[jj];
 			}
-		z[ii] += alpha * y_0;
+		z[ii] = beta * y[ii] + alpha * y_0;
 		}
 #else // x reg version
-	if(beta==0.0)
+	for(ii=0; ii<n; ii++)
 		{
-		for(ii=0; ii<m; ii++)
-			{
-			z[ii] = 0.0;
-			}
-		}
-	else
-		{
-		for(ii=0; ii<m; ii++)
-			{
-			z[ii] = beta * y[ii];
-			}
+		z[ii] = beta * y[ii];
 		}
 	jj = 0;
 	for(; jj<n-1; jj+=2)
@@ -138,11 +113,9 @@ void REF_GEMV_N(int m, int n, REAL alpha, struct XMAT *sA, int ai, int aj, struc
 #endif
 	return;
 	}
-#endif
 
 
 
-#if ! ( defined(HP_CM) & defined(DP) )
 void REF_GEMV_T(int m, int n, REAL alpha, struct XMAT *sA, int ai, int aj, struct XVEC *sx, int xi, REAL beta, struct XVEC *sy, int yi, struct XVEC *sz, int zi)
 	{
 	int ii, jj;
@@ -158,20 +131,6 @@ void REF_GEMV_T(int m, int n, REAL alpha, struct XMAT *sA, int ai, int aj, struc
 	REAL *x = sx->pa + xi;
 	REAL *y = sy->pa + yi;
 	REAL *z = sz->pa + zi;
-	if(beta==0.0)
-		{
-		for(ii=0; ii<n; ii++)
-			{
-			z[ii] = 0.0;
-			}
-		}
-	else
-		{
-		for(ii=0; ii<n; ii++)
-			{
-			z[ii] = beta * y[ii];
-			}
-		}
 	jj = 0;
 	for(; jj<n-1; jj+=2)
 		{
@@ -188,8 +147,8 @@ void REF_GEMV_T(int m, int n, REAL alpha, struct XMAT *sA, int ai, int aj, struc
 			y_0 += XMATEL_A(aai+ii, aaj+(jj+0)) * x[ii];
 			y_1 += XMATEL_A(aai+ii, aaj+(jj+1)) * x[ii];
 			}
-		z[jj+0] += alpha * y_0;
-		z[jj+1] += alpha * y_1;
+		z[jj+0] = beta * y[jj+0] + alpha * y_0;
+		z[jj+1] = beta * y[jj+1] + alpha * y_1;
 		}
 	for(; jj<n; jj++)
 		{
@@ -198,11 +157,10 @@ void REF_GEMV_T(int m, int n, REAL alpha, struct XMAT *sA, int ai, int aj, struc
 			{
 			y_0 += XMATEL_A(aai+ii, aaj+(jj+0)) * x[ii];
 			}
-		z[jj+0] += alpha * y_0;
+		z[jj+0] = beta * y[jj+0] + alpha * y_0;
 		}
 	return;
 	}
-#endif
 
 
 
@@ -227,33 +185,9 @@ void REF_GEMV_NT(int m, int n, REAL alpha_n, REAL alpha_t, struct XMAT *sA, int 
 	REAL *y_t = sy_t->pa + yi_t;
 	REAL *z_n = sz_n->pa + zi_n;
 	REAL *z_t = sz_t->pa + zi_t;
-	if(beta_n==0.0)
+	for(ii=0; ii<m; ii++)
 		{
-		for(ii=0; ii<m; ii++)
-			{
-			z_n[ii] = 0.0;
-			}
-		}
-	else
-		{
-		for(ii=0; ii<m; ii++)
-			{
-			z_n[ii] = beta_n * y_n[ii];
-			}
-		}
-	if(beta_t==0.0)
-		{
-		for(ii=0; ii<n; ii++)
-			{
-			z_t[ii] = 0.0;
-			}
-		}
-	else
-		{
-		for(ii=0; ii<m; ii++)
-			{
-			z_t[ii] = beta_t * y_t[ii];
-			}
+		z_n[ii] = beta_n * y_n[ii];
 		}
 	for(jj=0; jj<n; jj++)
 		{
@@ -265,14 +199,13 @@ void REF_GEMV_NT(int m, int n, REAL alpha_n, REAL alpha_t, struct XMAT *sA, int 
 			z_n[ii] += a_00 * x_n_0;
 			y_t_0 += a_00 * x_t[ii];
 			}
-		z_t[jj] += alpha_t * y_t_0;
+		z_t[jj] = beta_t * y_t[jj] + alpha_t * y_t_0;
 		}
 	return;
 	}
 
 
 
-#if ! ( defined(HP_CM) & defined(DP) )
 void REF_SYMV_L(int m, REAL alpha, struct XMAT *sA, int ai, int aj, struct XVEC *sx, int xi, REAL beta, struct XVEC *sy, int yi, struct XVEC *sz, int zi)
 	{
 	int ii, jj;
@@ -288,20 +221,6 @@ void REF_SYMV_L(int m, REAL alpha, struct XMAT *sA, int ai, int aj, struct XVEC 
 	REAL *x = sx->pa + xi;
 	REAL *y = sy->pa + yi;
 	REAL *z = sz->pa + zi;
-	if(beta==0.0)
-		{
-		for(ii=0; ii<m; ii++)
-			{
-			z[ii] = 0.0;
-			}
-		}
-	else
-		{
-		for(ii=0; ii<m; ii++)
-			{
-			z[ii] = beta * y[ii];
-			}
-		}
 	ii = 0;
 	for(; ii<m-1; ii+=2)
 		{
@@ -334,8 +253,8 @@ void REF_SYMV_L(int m, REAL alpha, struct XMAT *sA, int ai, int aj, struct XVEC 
 			y_0 += XMATEL_A(aai+jj, aaj+ii+0) * x[jj];
 			y_1 += XMATEL_A(aai+jj, aaj+ii+1) * x[jj];
 			}
-		z[ii+0] += alpha * y_0;
-		z[ii+1] += alpha * y_1;
+		z[ii+0] = beta * y[ii+0] + alpha * y_0;
+		z[ii+1] = beta * y[ii+1] + alpha * y_1;
 		}
 	for(; ii<m; ii++)
 		{
@@ -349,11 +268,10 @@ void REF_SYMV_L(int m, REAL alpha, struct XMAT *sA, int ai, int aj, struct XVEC 
 			{
 			y_0 += XMATEL_A(aai+jj, aaj+ii) * x[jj];
 			}
-		z[ii] += alpha * y_0;
+		z[ii] = beta * y[ii] + alpha * y_0;
 		}
 	return;
 	}
-#endif
 
 
 
@@ -372,22 +290,7 @@ void REF_SYMV_L_MN(int m, int n, REAL alpha, struct XMAT *sA, int ai, int aj, st
 	REAL *x = sx->pa + xi;
 	REAL *y = sy->pa + yi;
 	REAL *z = sz->pa + zi;
-	if(beta==0.0)
-		{
-		for(ii=0; ii<m; ii++)
-			{
-			z[ii] = 0.0;
-			}
-		}
-	else
-		{
-		for(ii=0; ii<m; ii++)
-			{
-			z[ii] = beta * y[ii];
-			}
-		}
-	ii = 0;
-	for(; ii<n; ii++)
+	for(ii=0; ii<n; ii++)
 		{
 		y_0 = 0.0;
 		jj = 0;
@@ -399,75 +302,14 @@ void REF_SYMV_L_MN(int m, int n, REAL alpha, struct XMAT *sA, int ai, int aj, st
 			{
 			y_0 += XMATEL_A(aai+jj, aaj+ii) * x[jj];
 			}
-		z[ii] += alpha * y_0;
-		}
-	for(; ii<m; ii++)
-		{
-		y_0 = 0.0;
-		jj = 0;
-		for(; jj<n; jj++)
-			{
-			y_0 += XMATEL_A(aai+ii, aaj+jj) * x[jj];
-			}
-		z[ii] += alpha * y_0;
+		z[ii] = beta * y[ii] + alpha * y_0;
 		}
 	return;
 	}
 
 
 
-#if ! ( defined(HP_CM) & defined(DP) )
-void REF_SYMV_U(int m, REAL alpha, struct XMAT *sA, int ai, int aj, struct XVEC *sx, int xi, REAL beta, struct XVEC *sy, int yi, struct XVEC *sz, int zi)
-	{
-	int ii, jj;
-	REAL
-		y_0, y_1;
-#if defined(MF_COLMAJ)
-	int lda = sA->m;
-	REAL *pA = sA->pA + ai + aj*lda;
-	const int aai=0; const int aaj=0;
-#else
-	int aai=ai; int aaj=aj;
-#endif
-	REAL *x = sx->pa + xi;
-	REAL *y = sy->pa + yi;
-	REAL *z = sz->pa + zi;
-	if(beta==0.0)
-		{
-		for(ii=0; ii<m; ii++)
-			{
-			z[ii] = 0.0;
-			}
-		}
-	else
-		{
-		for(ii=0; ii<m; ii++)
-			{
-			z[ii] = beta * y[ii];
-			}
-		}
-	ii = 0;
-	for(; ii<m; ii++)
-		{
-		y_0 = 0.0;
-		jj = 0;
-		for(; jj<=ii; jj++)
-			{
-			y_0 += XMATEL_A(aai+jj, aaj+ii) * x[jj];
-			}
-		for( ; jj<m; jj++)
-			{
-			y_0 += XMATEL_A(aai+ii, aaj+jj) * x[jj];
-			}
-		z[ii] += alpha * y_0;
-		}
-	return;
-	}
-#endif
-
-
-
-static void REF_TRMV_LNN_MN(int m, int n, struct XMAT *sA, int ai, int aj, struct XVEC *sx, int xi, struct XVEC *sz, int zi)
+void REF_TRMV_LNN(int m, int n, struct XMAT *sA, int ai, int aj, struct XVEC *sx, int xi, struct XVEC *sz, int zi)
 	{
 	int ii, jj;
 	REAL
@@ -524,15 +366,7 @@ static void REF_TRMV_LNN_MN(int m, int n, struct XMAT *sA, int ai, int aj, struc
 
 
 	
-void REF_TRMV_LNN(int m, struct XMAT *sA, int ai, int aj, struct XVEC *sx, int xi, struct XVEC *sz, int zi)
-	{
-	REF_TRMV_LNN_MN(m, m, sA, ai, aj, sx, xi, sz, zi);
-	return;
-	}
-
-
-
-static void REF_TRMV_LTN_MN(int m, int n, struct XMAT *sA, int ai, int aj, struct XVEC *sx, int xi, struct XVEC *sz, int zi)
+void REF_TRMV_LTN(int m, int n, struct XMAT *sA, int ai, int aj, struct XVEC *sx, int xi, struct XVEC *sz, int zi)
 	{
 	int ii, jj;
 	REAL
@@ -578,14 +412,6 @@ static void REF_TRMV_LTN_MN(int m, int n, struct XMAT *sA, int ai, int aj, struc
 			}
 		z[jj] = y_0;
 		}
-	return;
-	}
-
-
-
-void REF_TRMV_LTN(int m, struct XMAT *sA, int ai, int aj, struct XVEC *sx, int xi, struct XVEC *sz, int zi)
-	{
-	REF_TRMV_LTN_MN(m, m, sA, ai, aj, sx, xi, sz, zi);
 	return;
 	}
 
@@ -933,13 +759,10 @@ void REF_TRSV_LTN_MN(int m, int n, struct XMAT *sA, int ai, int aj, struct XVEC 
 			dA[ii] = 1.0 / XMATEL_A(aai+ii, aaj+ii);
 		sA->use_dA = 0;
 		}
-	if(x!=z)
-		for(ii=0; ii<m; ii++)
-			z[ii] = x[ii];
 	if(n%2!=0)
 		{
 		jj = n-1;
-		y_0 = z[jj];
+		y_0 = x[jj];
 		for(ii=jj+1; ii<m; ii++)
 			{
 			y_0 -= XMATEL_A(aai+ii, aaj+jj) * z[ii];
@@ -954,8 +777,8 @@ void REF_TRSV_LTN_MN(int m, int n, struct XMAT *sA, int ai, int aj, struct XVEC 
 		}
 	for(; jj>=0; jj-=2)
 		{
-		y_0 = z[jj+0];
-		y_1 = z[jj+1];
+		y_0 = x[jj+0];
+		y_1 = x[jj+1];
 		ii = jj+2;
 		for(; ii<m-1; ii+=2)
 			{
@@ -1447,77 +1270,21 @@ void REF_TRSV_UTN(int m, struct XMAT *sA, int ai, int aj, struct XVEC *sx, int x
 
 
 
-#if ! ( defined(HP_CM) & defined(DP) )
-void REF_GER(int m, int n, REAL alpha, struct XVEC *sx, int xi, struct XVEC *sy, int yi, struct XMAT *sC, int ci, int cj, struct XMAT *sD, int di, int dj)
-	{
-	int ii, jj;
-	REAL
-		c_00,
-		x_0,
-		y_0, y_1;
-#if defined(MF_COLMAJ)
-	int ldc = sC->m;
-	int ldd = sD->m;
-	REAL *pC = sC->pA + ci + cj*ldc;
-	REAL *pD = sD->pA + di + dj*ldd;
-	const int cci=0; const int ccj=0;
-	const int ddi=0; const int ddj=0;
-#else
-	int cci=ci; int ccj=cj;
-	int ddi=di; int ddj=dj;
-#endif
-	REAL *x = sx->pa + xi;
-	REAL *y = sy->pa + yi;
-	jj = 0;
-#if 1
-	for(; jj<n-1; jj+=2)
-		{
-		y_0 = alpha * y[jj+0];
-		y_1 = alpha * y[jj+1];
-		ii = 0;
-		for(; ii<m; ii++)
-			{
-			x_0 = x[ii];
-			XMATEL_D(ddi+ii, ddj+jj+0) = XMATEL_C(cci+ii, ccj+jj+0) + x_0 * y_0;
-			XMATEL_D(ddi+ii, ddj+jj+1) = XMATEL_C(cci+ii, ccj+jj+1) + x_0 * y_1;
-			}
-		}
-#endif
-	for(; jj<n; jj++)
-		{
-		y_0 = alpha * y[jj];
-		ii = 0;
-		for(; ii<m; ii++)
-			{
-			x_0 = x[ii];
-			XMATEL_D(ddi+ii, ddj+jj) = XMATEL_C(cci+ii, ccj+jj) + x_0 * y_0;
-			}
-		}
-	return;
-	}
-#endif
-
-
-
 #if (defined(LA_REFERENCE) & defined(REF)) | (defined(LA_HIGH_PERFORMANCE) & defined(HP_CM))
 
 
 
-#if ! ( defined(HP_CM) & defined(DP) )
 void GEMV_N(int m, int n, REAL alpha, struct XMAT *sA, int ai, int aj, struct XVEC *sx, int xi, REAL beta, struct XVEC *sy, int yi, struct XVEC *sz, int zi)
 	{
 	REF_GEMV_N(m, n, alpha, sA, ai, aj, sx, xi, beta, sy, yi, sz, zi);
 	}
-#endif
 
 
 
-#if ! ( defined(HP_CM) & defined(DP) )
 void GEMV_T(int m, int n, REAL alpha, struct XMAT *sA, int ai, int aj, struct XVEC *sx, int xi, REAL beta, struct XVEC *sy, int yi, struct XVEC *sz, int zi)
 	{
 	REF_GEMV_T(m, n, alpha, sA, ai, aj, sx, xi, beta, sy, yi, sz, zi);
 	}
-#endif
 
 
 
@@ -1528,12 +1295,10 @@ void GEMV_NT(int m, int n, REAL alpha_n, REAL alpha_t, struct XMAT *sA, int ai, 
 
 
 
-#if ! ( defined(HP_CM) & defined(DP) )
 void SYMV_L(int m, REAL alpha, struct XMAT *sA, int ai, int aj, struct XVEC *sx, int xi, REAL beta, struct XVEC *sy, int yi, struct XVEC *sz, int zi)
 	{
 	REF_SYMV_L(m, alpha, sA, ai, aj, sx, xi, beta, sy, yi, sz, zi);
 	}
-#endif
 
 
 
@@ -1544,25 +1309,18 @@ void SYMV_L_MN(int m, int n, REAL alpha, struct XMAT *sA, int ai, int aj, struct
 
 
 
-#if ! ( defined(HP_CM) & defined(DP) )
-void SYMV_U(int m, REAL alpha, struct XMAT *sA, int ai, int aj, struct XVEC *sx, int xi, REAL beta, struct XVEC *sy, int yi, struct XVEC *sz, int zi)
+// TODO mn & remove n !!!!!
+void TRMV_LNN(int m, int n, struct XMAT *sA, int ai, int aj, struct XVEC *sx, int xi, struct XVEC *sz, int zi)
 	{
-	REF_SYMV_U(m, alpha, sA, ai, aj, sx, xi, beta, sy, yi, sz, zi);
-	}
-#endif
-
-
-
-void TRMV_LNN(int m, struct XMAT *sA, int ai, int aj, struct XVEC *sx, int xi, struct XVEC *sz, int zi)
-	{
-	REF_TRMV_LNN(m, sA, ai, aj, sx, xi, sz, zi);
+	REF_TRMV_LNN(m, n, sA, ai, aj, sx, xi, sz, zi);
 	}
 
 
 
-void TRMV_LTN(int m, struct XMAT *sA, int ai, int aj, struct XVEC *sx, int xi, struct XVEC *sz, int zi)
+// TODO mn & remove n !!!!!
+void TRMV_LTN(int m, int n, struct XMAT *sA, int ai, int aj, struct XVEC *sx, int xi, struct XVEC *sz, int zi)
 	{
-	REF_TRMV_LTN(m, sA, ai, aj, sx, xi, sz, zi);
+	REF_TRMV_LTN(m, n, sA, ai, aj, sx, xi, sz, zi);
 	}
 
 
@@ -1634,15 +1392,6 @@ void TRSV_UTN(int m, struct XMAT *sA, int ai, int aj, struct XVEC *sx, int xi, s
 	{
 	REF_TRSV_UTN(m, sA, ai, aj, sx, xi, sz, zi);
 	}
-
-
-
-#if ! ( defined(HP_CM) & defined(DP) )
-void GER(int m, int n, REAL alpha, struct XVEC *sx, int xi, struct XVEC *sy, int yi, struct XMAT *sC, int ci, int cj, struct XMAT *sD, int di, int dj)
-	{
-	REF_GER(m, n, alpha, sx, xi, sy, yi, sC, ci, cj, sD, di, dj);
-	}
-#endif
 
 
 

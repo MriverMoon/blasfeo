@@ -38,8 +38,7 @@
 #include <pmmintrin.h>  // SSE3
 #include <smmintrin.h>  // SSE4
 #include <immintrin.h>  // AVX
-
-#include <blasfeo_d_kernel.h>
+#include "../../include/blasfeo_d_kernel.h"
 
 
 

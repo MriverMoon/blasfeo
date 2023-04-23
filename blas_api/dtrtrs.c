@@ -46,17 +46,17 @@
 
 
 #if defined(FORTRAN_BLAS_API)
-#define blasfeo_blas_dtrsm dtrsm_
-#define blasfeo_lapack_dtrtrs dtrtrs_
+#define blas_dtrsm dtrsm_
+#define blas_dtrtrs dtrtrs_
 #endif
 
 
 
-void blasfeo_lapack_dtrtrs(char *uplo, char *trans, char *diag, int *pm, int *pn, double *A, int *plda, double *B, int *pldb, int *info)
+void blas_dtrtrs(char *uplo, char *trans, char *diag, int *pm, int *pn, double *A, int *plda, double *B, int *pldb, int *info)
 	{
 
 #if defined(PRINT_NAME)
-	printf("\nblasfeo_lapack_dtrtrs %c %c %c %d %d %p %d %p %d %d\n", *uplo, *trans, *diag, *pm, *pn, A, *plda, B, *pldb, *info);
+	printf("\nblas_dtrtrs %c %c %c %d %d %p %d %p %d %d\n", *uplo, *trans, *diag, *pm, *pn, A, *plda, B, *pldb, *info);
 #endif
 
 
@@ -84,7 +84,7 @@ void blasfeo_lapack_dtrtrs(char *uplo, char *trans, char *diag, int *pm, int *pn
 		}
 	
 //	printf("\n%c %c %c %c\n", c_l, *uplo, *trans, *diag);
-	blasfeo_blas_dtrsm(&c_l, uplo, trans, diag, pm, pn, &d_1, A, plda, B, pldb);
+	blas_dtrsm(&c_l, uplo, trans, diag, pm, pn, &d_1, A, plda, B, pldb);
 
 	return;
 

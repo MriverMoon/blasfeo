@@ -87,13 +87,8 @@ BLASFEO_HP_CM_OBJS = \
 		blasfeo_hp_cm/dsyrk.o \
 		blasfeo_hp_cm/dtrsm.o \
 		blasfeo_hp_cm/dtrmm.o \
-		blasfeo_hp_cm/dsyr2k.o \
 		blasfeo_hp_cm/dpotrf.o \
 		blasfeo_hp_cm/dgetrf.o \
-		blasfeo_hp_cm/dgetr.o \
-		blasfeo_hp_cm/dgemv.o \
-		blasfeo_hp_cm/dsymv.o \
-		blasfeo_hp_cm/dger.o \
 		\
 		blasfeo_hp_cm/sgemm.o \
 		blasfeo_hp_cm/strsm.o \
@@ -139,7 +134,6 @@ BLAS_OBJS += \
 		blas_api/dsyrk_ref.o \
 		blas_api/dtrmm_ref.o \
 		blas_api/dtrsm_ref.o \
-		blas_api/dsyr2k_ref.o \
 		blas_api/dgesv.o \
 		blas_api/dgetrf_ref.o \
 		blas_api/dgetrs.o \
@@ -148,10 +142,6 @@ BLAS_OBJS += \
 		blas_api/dpotrf_ref.o \
 		blas_api/dpotrs.o \
 		blas_api/dtrtrs.o \
-		blas_api/dgetr_ref.o \
-		blas_api/dgemv_ref.o \
-		blas_api/dsymv_ref.o \
-		blas_api/dger_ref.o \
 		\
 		blas_api/saxpy.o \
 		blas_api/sdot.o \
@@ -165,31 +155,6 @@ REF_BLAS_OBJS += \
 		\
 		blasfeo_ref/s_blas3_ref_blas.o \
 
-ifeq ($(TARGET), X64_INTEL_SKYLAKE_X)
-
-### BLASFEO HP, PANEL-MAJOR ###
-BLASFEO_HP_PM_OBJS = \
-		blasfeo_hp_pm/d_blas1_lib8.o \
-		blasfeo_hp_pm/d_blas2_lib8.o \
-		blasfeo_hp_pm/d_blas2_diag_lib.o \
-		blasfeo_hp_pm/d_blas3_lib8.o \
-		blasfeo_hp_pm/d_blas3_diag_lib8.o \
-		blasfeo_hp_pm/d_lapack_lib8.o \
-		\
-		blasfeo_hp_pm/s_blas1_lib16.o \
-		blasfeo_hp_pm/s_blas2_lib16.o \
-		blasfeo_hp_pm/s_blas2_diag_lib.o \
-		blasfeo_hp_pm/s_blas3_lib16.o \
-		blasfeo_hp_pm/s_blas3_diag_lib16.o \
-		blasfeo_hp_pm/s_lapack_lib16.o \
-
-### AUXILIARY HP, PANEL-MAJOR ###
-AUX_HP_PM_OBJS = \
-		auxiliary/d_aux_lib8.o \
-		auxiliary/s_aux_lib16.o \
-		#auxiliary/m_aux_lib48.o \
-
-endif
 ifeq ($(TARGET), $(filter $(TARGET), X64_INTEL_HASWELL X64_INTEL_SANDY_BRIDGE))
 
 ### BLASFEO HP, PANEL-MAJOR ###
@@ -215,7 +180,7 @@ AUX_HP_PM_OBJS = \
 		auxiliary/m_aux_lib48.o \
 
 endif
-ifeq ($(TARGET), $(filter $(TARGET), X64_INTEL_CORE X64_AMD_BULLDOZER X86_AMD_JAGUAR X86_AMD_BARCELONA ARMV8A_APPLE_M1 ARMV8A_ARM_CORTEX_A76 ARMV8A_ARM_CORTEX_A73 ARMV8A_ARM_CORTEX_A57 ARMV8A_ARM_CORTEX_A55 ARMV8A_ARM_CORTEX_A53 ARMV7A_ARM_CORTEX_A15 ARMV7A_ARM_CORTEX_A9 ARMV7A_ARM_CORTEX_A7 GENERIC))
+ifeq ($(TARGET), $(filter $(TARGET), X64_INTEL_CORE X64_AMD_BULLDOZER X86_AMD_JAGUAR X86_AMD_BARCELONA ARMV8A_ARM_CORTEX_A76 ARMV8A_ARM_CORTEX_A73 ARMV8A_ARM_CORTEX_A57 ARMV8A_ARM_CORTEX_A55 ARMV8A_ARM_CORTEX_A53 ARMV7A_ARM_CORTEX_A15 ARMV7A_ARM_CORTEX_A9 ARMV7A_ARM_CORTEX_A7 GENERIC))
 
 ### BLASFEO HP, PANEL-MAJOR ###
 BLASFEO_HP_PM_OBJS = \
@@ -241,27 +206,6 @@ AUX_HP_PM_OBJS = \
 
 endif
 
-ifeq ($(TARGET), X64_INTEL_SKYLAKE_X)
-
-### KERNELS ###
-KERNEL_OBJS = \
-		kernel/avx512/kernel_dgemm_24x8_lib8.o \
-		kernel/avx512/kernel_dgemm_16x8_lib8.o \
-		kernel/avx512/kernel_dgemm_8x8_lib8.o \
-		kernel/avx512/kernel_dgemv_8_lib8.o \
-		kernel/avx512/kernel_dgemv_16_lib8.o \
-		kernel/avx512/kernel_dpack_lib8.o \
-		kernel/avx512/kernel_dgeqrf_8_lib8.o \
-		kernel/avx512/kernel_dgelqf_lib8.o \
-		\
-		kernel/sse3/kernel_align_x64.o \
-		\
-		\
-		\
-		kernel/avx2/kernel_dgemm_4x4_lib4.o \
-		kernel/avx/kernel_dpack_lib4.o \
-
-endif
 ifeq ($(TARGET), X64_INTEL_HASWELL)
 
 ### KERNELS ###
@@ -271,22 +215,17 @@ KERNEL_OBJS = \
 		kernel/avx2/kernel_dgemm_8x4_lib4.o \
 		kernel/avx2/kernel_dgemm_4x4_lib4.o \
 		kernel/avx2/kernel_dgemv_8_lib4.o \
-		kernel/avx2/kernel_dgemv_4_lib4.o \
 		kernel/avx2/kernel_dsymv_6_lib4.o \
-		kernel/avx2/kernel_dger_lib4.o \
 		kernel/avx2/kernel_dgetrf_pivot_lib4.o \
 		kernel/avx2/kernel_dgebp_lib4.o \
 		kernel/avx2/kernel_dgelqf_4_lib4.o \
 		kernel/avx2/kernel_dgetr_lib4.o \
 		kernel/avx/kernel_dgeqrf_4_lib4.o \
+		kernel/avx/kernel_dgemv_4_lib4.o \
 		kernel/avx/kernel_dgemm_diag_lib4.o \
 		kernel/avx/kernel_dgecp_lib4.o \
 		kernel/avx/kernel_dpack_lib4.o \
-		kernel/avx/kernel_dgetr_lib.o \
 		kernel/generic/kernel_dgemv_4_lib4.o \
-		kernel/generic/kernel_dsymv_4_lib4.o \
-		kernel/generic/kernel_dpack_buffer_lib4.o \
-		kernel/generic/kernel_dger_lib4.o \
 		kernel/generic/kernel_ddot_lib.o \
 		kernel/generic/kernel_daxpy_lib.o \
 		\
@@ -326,18 +265,13 @@ KERNEL_OBJS = \
 		kernel/avx/kernel_dgemv_8_lib4.o \
 		kernel/avx/kernel_dgemv_4_lib4.o \
 		kernel/avx/kernel_dsymv_6_lib4.o \
-		kernel/avx/kernel_dger_lib4.o \
 		kernel/avx/kernel_dgetrf_pivot_lib4.o \
 		kernel/avx/kernel_dgeqrf_4_lib4.o \
 		kernel/avx/kernel_dgebp_lib4.o \
 		kernel/avx/kernel_dgecp_lib4.o \
 		kernel/avx/kernel_dgetr_lib4.o \
 		kernel/avx/kernel_dpack_lib4.o \
-		kernel/avx/kernel_dgetr_lib.o \
 		kernel/generic/kernel_dgemv_4_lib4.o \
-		kernel/generic/kernel_dsymv_4_lib4.o \
-		kernel/generic/kernel_dpack_buffer_lib4.o \
-		kernel/generic/kernel_dger_lib4.o \
 		kernel/generic/kernel_ddot_lib.o \
 		kernel/generic/kernel_daxpy_lib.o \
 		\
@@ -379,11 +313,8 @@ KERNEL_OBJS = \
 		kernel/generic/kernel_dgecp_lib4.o \
 		kernel/generic/kernel_dgetr_lib4.o \
 		kernel/generic/kernel_dpack_lib4.o \
-		kernel/generic/kernel_dpack_buffer_lib4.o \
-		kernel/generic/kernel_dger_lib4.o \
 		kernel/generic/kernel_ddot_lib.o \
 		kernel/generic/kernel_daxpy_lib.o \
-		kernel/generic/kernel_dgetr_lib.o \
 		\
 		kernel/sse3/kernel_sgemm_4x4_lib4.o \
 		kernel/generic/kernel_sgemm_4x4_lib4.o \
@@ -416,11 +347,8 @@ KERNEL_OBJS = \
 		kernel/generic/kernel_dgecp_lib4.o \
 		kernel/generic/kernel_dgetr_lib4.o \
 		kernel/generic/kernel_dpack_lib4.o \
-		kernel/generic/kernel_dpack_buffer_lib4.o \
-		kernel/generic/kernel_dger_lib4.o \
 		kernel/generic/kernel_ddot_lib.o \
 		kernel/generic/kernel_daxpy_lib.o \
-		kernel/generic/kernel_dgetr_lib.o \
 		\
 		kernel/generic/kernel_sgemm_4x4_lib4.o \
 		kernel/generic/kernel_sgemm_diag_lib4.o \
@@ -453,11 +381,8 @@ KERNEL_OBJS = \
 		kernel/generic/kernel_dgecp_lib4.o \
 		kernel/generic/kernel_dgetr_lib4.o \
 		kernel/generic/kernel_dpack_lib4.o \
-		kernel/generic/kernel_dpack_buffer_lib4.o \
-		kernel/generic/kernel_dger_lib4.o \
 		kernel/generic/kernel_ddot_lib.o \
 		kernel/generic/kernel_daxpy_lib.o \
-		kernel/generic/kernel_dgetr_lib.o \
 		\
 		kernel/avx_x86/kernel_sgemm_4x4_lib4.o \
 		kernel/avx_x86/kernel_sgemv_4_lib4.o \
@@ -493,11 +418,8 @@ KERNEL_OBJS = \
 		kernel/generic/kernel_dgecp_lib4.o \
 		kernel/generic/kernel_dgetr_lib4.o \
 		kernel/generic/kernel_dpack_lib4.o \
-		kernel/generic/kernel_dpack_buffer_lib4.o \
-		kernel/generic/kernel_dger_lib4.o \
 		kernel/generic/kernel_ddot_lib.o \
 		kernel/generic/kernel_daxpy_lib.o \
-		kernel/generic/kernel_dgetr_lib.o \
 		\
 		kernel/generic/kernel_sgemm_4x4_lib4.o \
 		kernel/generic/kernel_sgemm_diag_lib4.o \
@@ -515,7 +437,7 @@ KERNEL_OBJS = \
 		kernel/generic/kernel_d_aux_lib.o \
 
 endif
-ifeq ($(TARGET), $(filter $(TARGET), ARMV8A_APPLE_M1 ARMV8A_ARM_CORTEX_A76 ARMV8A_ARM_CORTEX_A73 ARMV8A_ARM_CORTEX_A57))
+ifeq ($(TARGET), $(filter $(TARGET), ARMV8A_ARM_CORTEX_A76 ARMV8A_ARM_CORTEX_A73 ARMV8A_ARM_CORTEX_A57))
 
 ### KERNELS ###
 KERNEL_OBJS = \
@@ -524,8 +446,6 @@ KERNEL_OBJS = \
 		kernel/armv8a/kernel_dpack_lib4.o \
 		kernel/armv8a/kernel_dgetrf_pivot_lib4.o \
 		kernel/armv8a/kernel_dgemv_4_lib4.o \
-		kernel/armv8a/kernel_dgetr_lib.o \
-		kernel/armv8a/kernel_dger_lib4.o \
 		kernel/generic/kernel_dgemm_4x4_lib4.o \
 		kernel/generic/kernel_dgemm_diag_lib4.o \
 		kernel/generic/kernel_dgemv_4_lib4.o \
@@ -535,11 +455,8 @@ KERNEL_OBJS = \
 		kernel/generic/kernel_dgecp_lib4.o \
 		kernel/generic/kernel_dgetr_lib4.o \
 		kernel/generic/kernel_dpack_lib4.o \
-		kernel/generic/kernel_dpack_buffer_lib4.o \
-		kernel/generic/kernel_dger_lib4.o \
 		kernel/generic/kernel_ddot_lib.o \
 		kernel/generic/kernel_daxpy_lib.o \
-		kernel/generic/kernel_dgetr_lib.o \
 		\
 		kernel/armv8a/kernel_sgemm_16x4_lib4.o \
 		kernel/armv8a/kernel_sgemm_12x4_lib4.o \
@@ -575,8 +492,6 @@ KERNEL_OBJS = \
 		kernel/armv8a/kernel_dgetrf_pivot_lib4.o \
 		kernel/armv8a/kernel_dgemv_4_lib4.o \
 		kernel/armv8a/kernel_spack_lib4.o \
-		kernel/armv8a/kernel_dgetr_lib.o \
-		kernel/armv8a/kernel_dger_lib4.o \
 		kernel/generic/kernel_dgemm_4x4_lib4.o \
 		kernel/generic/kernel_dgemm_diag_lib4.o \
 		kernel/generic/kernel_dgemv_4_lib4.o \
@@ -586,11 +501,8 @@ KERNEL_OBJS = \
 		kernel/generic/kernel_dgecp_lib4.o \
 		kernel/generic/kernel_dgetr_lib4.o \
 		kernel/generic/kernel_dpack_lib4.o \
-		kernel/generic/kernel_dpack_buffer_lib4.o \
-		kernel/generic/kernel_dger_lib4.o \
 		kernel/generic/kernel_ddot_lib.o \
 		kernel/generic/kernel_daxpy_lib.o \
-		kernel/generic/kernel_dgetr_lib.o \
 		\
 		kernel/armv8a/kernel_sgemm_16x4_lib4.o \
 		kernel/armv8a/kernel_sgemm_12x4_lib4.o \
@@ -628,11 +540,8 @@ KERNEL_OBJS = \
 		kernel/generic/kernel_dgecp_lib4.o \
 		kernel/generic/kernel_dgetr_lib4.o \
 		kernel/generic/kernel_dpack_lib4.o \
-		kernel/generic/kernel_dpack_buffer_lib4.o \
-		kernel/generic/kernel_dger_lib4.o \
 		kernel/generic/kernel_ddot_lib.o \
 		kernel/generic/kernel_daxpy_lib.o \
-		kernel/generic/kernel_dgetr_lib.o \
 		\
 		kernel/armv7a/kernel_sgemm_12x4_lib4.o \
 		kernel/armv7a/kernel_sgemm_8x4_lib4.o \
@@ -667,11 +576,8 @@ KERNEL_OBJS = \
 		kernel/generic/kernel_dgecp_lib4.o \
 		kernel/generic/kernel_dgetr_lib4.o \
 		kernel/generic/kernel_dpack_lib4.o \
-		kernel/generic/kernel_dpack_buffer_lib4.o \
-		kernel/generic/kernel_dger_lib4.o \
 		kernel/generic/kernel_ddot_lib.o \
 		kernel/generic/kernel_daxpy_lib.o \
-		kernel/generic/kernel_dgetr_lib.o \
 		\
 		kernel/armv7a/kernel_sgemm_8x4_lib4.o \
 		kernel/armv7a/kernel_sgemm_4x4_lib4.o \
@@ -704,11 +610,8 @@ KERNEL_OBJS = \
 		kernel/generic/kernel_dgetrf_pivot_lib4.o \
 		kernel/generic/kernel_dgeqrf_4_lib4.o \
 		kernel/generic/kernel_dpack_lib4.o \
-		kernel/generic/kernel_dpack_buffer_lib4.o \
-		kernel/generic/kernel_dger_lib4.o \
 		kernel/generic/kernel_ddot_lib.o \
 		kernel/generic/kernel_daxpy_lib.o \
-		kernel/generic/kernel_dgetr_lib.o \
 		\
 		kernel/generic/kernel_sgemm_4x4_lib4.o \
 		kernel/generic/kernel_sgemm_diag_lib4.o \
@@ -825,27 +728,7 @@ ifeq ($(MF), PANELMAJ)
 OBJS += $(REF_BLAS_OBJS)
 endif
 
-ifeq ($(COMPLEMENT_WITH_NETLIB_BLAS), 1)
-include $(CURRENT_DIR)/netlib/Makefile.netlib_blas
-OBJS += $(NETLIB_BLAS_OBJS)
-endif # COMPLEMENT_WITH_NETLIB_BLAS
-
-ifeq ($(COMPLEMENT_WITH_NETLIB_LAPACK), 1)
-include $(CURRENT_DIR)/netlib/Makefile.netlib_lapack
-OBJS += $(NETLIB_LAPACK_OBJS)
-endif # COMPLEMENT_WITH_NETLIB_LAPACK
-
-ifeq ($(CBLAS_API), 1)
-include $(CURRENT_DIR)/netlib/Makefile.netlib_cblas
-OBJS += $(NETLIB_CBLAS_OBJS)
-endif # CBLAS_API
-
-ifeq ($(LAPACKE_API), 1)
-include $(CURRENT_DIR)/netlib/Makefile.netlib_lapacke
-OBJS += $(NETLIB_LAPACKE_OBJS)
-endif # LAPACKE_API
-
-endif # BLAS_API
+endif
 
 endif # LA REFERENCE
 
@@ -888,7 +771,7 @@ endif
 ifeq ($(TARGET), X86_AMD_BARCELONA)
 OBJS += sandbox/kernel_sse3_x86.o
 endif
-ifeq ($(TARGET), $(filter $(TARGET), ARMV8A_APPLE_M1 ARMV8A_ARM_CORTEX_A76 ARMV8A_ARM_CORTEX_A73 ARMV8A_ARM_CORTEX_A57 ARMV8A_ARM_CORTEX_A55 ARMV8A_ARM_CORTEX_A53))
+ifeq ($(TARGET), $(filter $(TARGET), ARMV8A_ARM_CORTEX_A76 ARMV8A_ARM_CORTEX_A73 ARMV8A_ARM_CORTEX_A57 ARMV8A_ARM_CORTEX_A55 ARMV8A_ARM_CORTEX_A53))
 OBJS += sandbox/kernel_armv8a.o
 endif
 ifeq ($(TARGET), $(filter $(TARGET), ARMV7A_ARM_CORTEX_A15 ARMV7A_ARM_CORTEX_A9 ARMV7A_ARM_CORTEX_A7))
@@ -900,30 +783,6 @@ endif
 
 #OBJS += sandbox/kernel_c_dummy.o
 #OBJS += sandbox/kernel_asm_dummy.o
-
-endif
-
-
-
-ifeq ($(EXPERIMENTAL), 1)
-
-ifeq ($(BLAS_API), 1)
-OBJS += blas_api/experimental/dsyevr.o
-OBJS += blas_api/experimental/dsyevd.o
-OBJS += blas_api/experimental/dsytrd.o
-OBJS += blas_api/experimental/dsytd2.o
-OBJS += blas_api/experimental/dlatrd.o
-OBJS += blas_api/experimental/dormtr.o
-OBJS += blas_api/experimental/dormqr.o
-OBJS += blas_api/experimental/dorm2r.o
-OBJS += blas_api/experimental/dlarfb.o
-OBJS += blas_api/experimental/dlarft.o
-OBJS += blas_api/experimental/dlarf.o
-OBJS += blas_api/experimental/dstedc.o
-OBJS += blas_api/experimental/dlaed0.o
-OBJS += blas_api/experimental/dlaed1.o
-OBJS += blas_api/experimental/dlaed3.o
-endif
 
 endif
 
@@ -994,8 +853,7 @@ endif
 ifeq ($(SANDBOX_MODE), 1)
 	( cd sandbox; $(MAKE) obj)
 endif
-	# TODO fix shared library extension depending on architecture
-	$(CC) -shared -o libblasfeo.so $(OBJS) $(LIBS_EXTERNAL_BLAS) -lm #-Wl,-Bsymbolic
+	$(CC) -shared -o libblasfeo.so $(OBJS) -lm #-Wl,-Bsymbolic
 	mv libblasfeo.so ./lib/
 	@echo
 	@echo " libblasfeo.so shared library build complete."
@@ -1005,14 +863,6 @@ endif
 # generate target header
 target:
 	touch ./include/blasfeo_target.h
-ifeq ($(TARGET), X64_INTEL_SKYLAKE_X)
-	echo "#ifndef TARGET_X64_INTEL_SKYLAKE_X"  >  ./include/blasfeo_target.h
-	echo "#define TARGET_X64_INTEL_SKYLAKE_X"  >> ./include/blasfeo_target.h
-	echo "#endif"                              >> ./include/blasfeo_target.h
-#	echo "#ifndef TARGET_NEED_FEATURE_AVX512F" >> ./include/blasfeo_target.h
-#	echo "#define TARGET_NEED_FEATURE_AVX512F" >> ./include/blasfeo_target.h
-#	echo "#endif"                              >> ./include/blasfeo_target.h
-endif
 ifeq ($(TARGET), X64_INTEL_HASWELL)
 	echo "#ifndef TARGET_X64_INTEL_HASWELL" >  ./include/blasfeo_target.h
 	echo "#define TARGET_X64_INTEL_HASWELL" >> ./include/blasfeo_target.h
@@ -1061,25 +911,11 @@ ifeq ($(TARGET), X86_AMD_BARCELONA)
 	echo "#define TARGET_X86_AMD_BARCELONA" >> ./include/blasfeo_target.h
 	echo "#endif"                           >> ./include/blasfeo_target.h
 endif
-ifeq ($(TARGET), ARMV8A_APPLE_M1)
-	echo "#ifndef TARGET_ARMV8A_APPLE_M1"       >  ./include/blasfeo_target.h
-	echo "#define TARGET_ARMV8A_APPLE_M1"       >> ./include/blasfeo_target.h
-	echo "#endif"                               >> ./include/blasfeo_target.h
-	echo "#ifndef TARGET_ARMV8A_ARM_CORTEX_A57" >> ./include/blasfeo_target.h
-	echo "#define TARGET_ARMV8A_ARM_CORTEX_A57" >> ./include/blasfeo_target.h
-	echo "#endif"                               >> ./include/blasfeo_target.h
-	echo "#ifndef TARGET_NEED_FEATURE_VFPv4"    >> ./include/blasfeo_target.h
-	echo "#define TARGET_NEED_FEATURE_VFPv4"    >> ./include/blasfeo_target.h
-	echo "#endif"                               >> ./include/blasfeo_target.h
-	echo "#ifndef TARGET_NEED_FEATURE_NEONv2"   >> ./include/blasfeo_target.h
-	echo "#define TARGET_NEED_FEATURE_NEONv2"   >> ./include/blasfeo_target.h
-	echo "#endif"                               >> ./include/blasfeo_target.h
-endif
 ifeq ($(TARGET), ARMV8A_ARM_CORTEX_A76)
 	echo "#ifndef TARGET_ARMV8A_ARM_CORTEX_A76" >  ./include/blasfeo_target.h
 	echo "#define TARGET_ARMV8A_ARM_CORTEX_A76" >> ./include/blasfeo_target.h
 	echo "#endif"                               >> ./include/blasfeo_target.h
-	echo "#ifndef TARGET_ARMV8A_ARM_CORTEX_A57" >> ./include/blasfeo_target.h
+	echo "#ifndef TARGET_ARMV8A_ARM_CORTEX_A57" >  ./include/blasfeo_target.h
 	echo "#define TARGET_ARMV8A_ARM_CORTEX_A57" >> ./include/blasfeo_target.h
 	echo "#endif"                               >> ./include/blasfeo_target.h
 	echo "#ifndef TARGET_NEED_FEATURE_VFPv4"    >> ./include/blasfeo_target.h
@@ -1093,7 +929,7 @@ ifeq ($(TARGET), ARMV8A_ARM_CORTEX_A73)
 	echo "#ifndef TARGET_ARMV8A_ARM_CORTEX_A73" >  ./include/blasfeo_target.h
 	echo "#define TARGET_ARMV8A_ARM_CORTEX_A73" >> ./include/blasfeo_target.h
 	echo "#endif"                               >> ./include/blasfeo_target.h
-	echo "#ifndef TARGET_ARMV8A_ARM_CORTEX_A57" >> ./include/blasfeo_target.h
+	echo "#ifndef TARGET_ARMV8A_ARM_CORTEX_A57" >  ./include/blasfeo_target.h
 	echo "#define TARGET_ARMV8A_ARM_CORTEX_A57" >> ./include/blasfeo_target.h
 	echo "#endif"                               >> ./include/blasfeo_target.h
 	echo "#ifndef TARGET_NEED_FEATURE_VFPv4"    >> ./include/blasfeo_target.h
@@ -1118,7 +954,7 @@ ifeq ($(TARGET), ARMV8A_ARM_CORTEX_A55)
 	echo "#ifndef TARGET_ARMV8A_ARM_CORTEX_A55" >  ./include/blasfeo_target.h
 	echo "#define TARGET_ARMV8A_ARM_CORTEX_A55" >> ./include/blasfeo_target.h
 	echo "#endif"                               >> ./include/blasfeo_target.h
-	echo "#ifndef TARGET_ARMV8A_ARM_CORTEX_A53" >> ./include/blasfeo_target.h
+	echo "#ifndef TARGET_ARMV8A_ARM_CORTEX_A53" >  ./include/blasfeo_target.h
 	echo "#define TARGET_ARMV8A_ARM_CORTEX_A53" >> ./include/blasfeo_target.h
 	echo "#endif"                               >> ./include/blasfeo_target.h
 	echo "#ifndef TARGET_NEED_FEATURE_VFPv4"    >> ./include/blasfeo_target.h
@@ -1164,7 +1000,6 @@ endif
 ifeq ($(TARGET), ARMV7A_ARM_CORTEX_A9)
 	echo "#ifndef TARGET_ARMV7A_ARM_CORTEX_A9" >  ./include/blasfeo_target.h
 	echo "#define TARGET_ARMV7A_ARM_CORTEX_A9" >> ./include/blasfeo_target.h
-	echo "#endif"                              >> ./include/blasfeo_target.h
 	echo "#ifndef TARGET_NEED_FEATURE_VFPv3"   >> ./include/blasfeo_target.h
 	echo "#define TARGET_NEED_FEATURE_VFPv3"   >> ./include/blasfeo_target.h
 	echo "#endif"                              >> ./include/blasfeo_target.h
@@ -1180,62 +1015,42 @@ endif
 ifeq ($(LA), HIGH_PERFORMANCE)
 	echo "#ifndef LA_HIGH_PERFORMANCE" >> ./include/blasfeo_target.h
 	echo "#define LA_HIGH_PERFORMANCE" >> ./include/blasfeo_target.h
-	echo "#endif"                      >> ./include/blasfeo_target.h
+	echo "#endif" >> ./include/blasfeo_target.h
 endif
 ifeq ($(LA), EXTERNAL_BLAS_WRAPPER)
 	echo "#ifndef LA_EXTERNAL_BLAS_WRAPPER" >> ./include/blasfeo_target.h
 	echo "#define LA_EXTERNAL_BLAS_WRAPPER" >> ./include/blasfeo_target.h
-	echo "#endif"                           >> ./include/blasfeo_target.h
+	echo "#endif" >> ./include/blasfeo_target.h
 endif
 ifeq ($(LA), REFERENCE)
 	echo "#ifndef LA_REFERENCE" >> ./include/blasfeo_target.h
 	echo "#define LA_REFERENCE" >> ./include/blasfeo_target.h
-	echo "#endif"               >> ./include/blasfeo_target.h
+	echo "#endif" >> ./include/blasfeo_target.h
 endif
 ifeq ($(MF), COLMAJ)
 	echo "#ifndef MF_COLMAJ" >> ./include/blasfeo_target.h
 	echo "#define MF_COLMAJ" >> ./include/blasfeo_target.h
-	echo "#endif"            >> ./include/blasfeo_target.h
+	echo "#endif" >> ./include/blasfeo_target.h
 endif
 ifeq ($(MF), PANELMAJ)
 	echo "#ifndef MF_PANELMAJ" >> ./include/blasfeo_target.h
 	echo "#define MF_PANELMAJ" >> ./include/blasfeo_target.h
-	echo "#endif"              >> ./include/blasfeo_target.h
+	echo "#endif" >> ./include/blasfeo_target.h
 endif
 ifeq ($(EXT_DEP), 1)
 	echo "#ifndef EXT_DEP" >> ./include/blasfeo_target.h
 	echo "#define EXT_DEP" >> ./include/blasfeo_target.h
-	echo "#endif"          >> ./include/blasfeo_target.h
+	echo "#endif" >> ./include/blasfeo_target.h
 endif
 ifeq ($(BLAS_API), 1)
 	echo "#ifndef BLAS_API" >> ./include/blasfeo_target.h
 	echo "#define BLAS_API" >> ./include/blasfeo_target.h
-	echo "#endif"           >> ./include/blasfeo_target.h
-endif
-ifeq ($(CBLAS_API), 1)
-	echo "#ifndef CBLAS_API" >> ./include/blasfeo_target.h
-	echo "#define CBLAS_API" >> ./include/blasfeo_target.h
-	echo "#endif"            >> ./include/blasfeo_target.h
+	echo "#endif" >> ./include/blasfeo_target.h
 endif
 ifeq ($(FORTRAN_BLAS_API), 1)
 	echo "#ifndef FORTRAN_BLAS_API" >> ./include/blasfeo_target.h
 	echo "#define FORTRAN_BLAS_API" >> ./include/blasfeo_target.h
-	echo "#endif"                   >> ./include/blasfeo_target.h
-endif
-ifeq ($(OS), LINUX)
-	echo "#ifndef OS_LINUX" >> ./include/blasfeo_target.h
-	echo "#define OS_LINUX" >> ./include/blasfeo_target.h
-	echo "#endif"           >> ./include/blasfeo_target.h
-endif
-ifeq ($(OS), MAC)
-	echo "#ifndef OS_MAC" >> ./include/blasfeo_target.h
-	echo "#define OS_MAC" >> ./include/blasfeo_target.h
-	echo "#endif"         >> ./include/blasfeo_target.h
-endif
-ifeq ($(OS), WINDOWS)
-	echo "#ifndef OS_WINDOWS" >> ./include/blasfeo_target.h
-	echo "#define OS_WINDOWS" >> ./include/blasfeo_target.h
-	echo "#endif"             >> ./include/blasfeo_target.h
+	echo "#endif" >> ./include/blasfeo_target.h
 endif
 
 
@@ -1246,9 +1061,6 @@ install_static:
 	cp -f ./lib/libblasfeo.a $(PREFIX)/blasfeo/lib/
 	mkdir -p $(PREFIX)/blasfeo/include
 	cp -f ./include/*.h $(PREFIX)/blasfeo/include/
-ifeq ($(CBLAS_API), 1)
-	cp -f ./netlib/cblas/include/*.h $(PREFIX)/blasfeo/include/
-endif
 
 
 # install share library & headers
@@ -1258,9 +1070,6 @@ install_shared:
 	cp -f ./lib/libblasfeo.so $(PREFIX)/blasfeo/lib/
 	mkdir -p $(PREFIX)/blasfeo/include
 	cp -f ./include/*.h $(PREFIX)/blasfeo/include/
-ifeq ($(CBLAS_API), 1)
-	cp -f ./netlib/cblas/include/*.h $(PREFIX)/blasfeo/include/
-endif
 
 
 # clean .o files
@@ -1441,9 +1250,6 @@ adb_push_tests_one:
 
 adb_run_tests_one:
 	make -C tests adb_run
-
-sde_run_tests_one:
-	make -C tests sde_run
 
 # aux test
 build_tests_aux:

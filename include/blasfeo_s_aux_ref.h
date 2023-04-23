@@ -57,12 +57,14 @@ extern "C" {
 
 // returns the memory size (in bytes) needed for a smat
 size_t blasfeo_ref_memsize_smat(int m, int n);
+size_t blasfeo_ref_memsize_smat_ps(int ps, int m, int n);
 // returns the memory size (in bytes) needed for the diagonal of a smat
 size_t blasfeo_ref_memsize_diag_smat(int m, int n);
 // returns the memory size (in bytes) needed for a svec
 size_t blasfeo_ref_memsize_svec(int m);
 // create a strmat for a matrix of size m*n by using memory passed by a pointer (pointer is not updated)
 void blasfeo_ref_create_smat(int m, int n, struct blasfeo_smat *sA, void *memory);
+void blasfeo_ref_create_smat_ps(int ps, int m, int n, struct blasfeo_smat *sA, void *memory);
 // create a strvec for a vector of size m by using memory passed by a pointer (pointer is not updated)
 void blasfeo_ref_create_svec(int m, struct blasfeo_svec *sA, void *memory);
 void blasfeo_ref_pack_smat(int m, int n, float *A, int lda, struct blasfeo_smat *sA, int ai, int aj);
@@ -126,8 +128,6 @@ float blasfeo_ref_svecex1(struct blasfeo_svec *sx, int xi);
 void blasfeo_ref_svecad_sp(int m, float alpha, struct blasfeo_svec *sx, int xi, int *idx, struct blasfeo_svec *sz, int zi);
 void blasfeo_ref_svecin_sp(int m, float alpha, struct blasfeo_svec *sx, int xi, int *idx, struct blasfeo_svec *sz, int zi);
 void blasfeo_ref_svecex_sp(int m, float alpha, int *idx, struct blasfeo_svec *sx, int x, struct blasfeo_svec *sz, int zi);
-// z += alpha * x[idx]
-void blasfeo_ref_svecexad_sp(int m, double alpha, int *idx, struct blasfeo_svec *sx, int xi, struct blasfeo_svec *sz, int zi);
 void blasfeo_ref_sveccl(int m, struct blasfeo_svec *sxm, int xim, struct blasfeo_svec *sx, int xi, struct blasfeo_svec *sxp, int xip, struct blasfeo_svec *sz, int zi);
 void blasfeo_ref_sveccl_mask(int m, struct blasfeo_svec *sxm, int xim, struct blasfeo_svec *sx, int xi, struct blasfeo_svec *sxp, int xip, struct blasfeo_svec *sz, int zi, struct blasfeo_svec *sm, int mi);
 void blasfeo_ref_svecze(int m, struct blasfeo_svec *sm, int mi, struct blasfeo_svec *sv, int vi, struct blasfeo_svec *se, int ei);

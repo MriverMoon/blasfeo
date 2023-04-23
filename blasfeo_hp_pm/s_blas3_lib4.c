@@ -74,7 +74,7 @@ void blasfeo_hp_sgemm_nt(int m, int n, int k, float alpha, struct blasfeo_smat *
 	int offsetD;
 	if(ci0>=0)
 		{
-		pC += ci0/ps*ps*sdc;
+		pC += ci0/ps*ps*sdd;
 		offsetC = ci0%ps;
 		}
 	else
@@ -485,7 +485,7 @@ void blasfeo_hp_sgemm_nn(int m, int n, int k, float alpha, struct blasfeo_smat *
 	int offsetD;
 	if(ci0>=0)
 		{
-		pC += ci0/ps*ps*sdc;
+		pC += ci0/ps*ps*sdd;
 		offsetC = ci0%ps;
 		}
 	else
@@ -1592,7 +1592,7 @@ void blasfeo_hp_ssyrk_ln(int m, int k, float alpha, struct blasfeo_smat *sA, int
 	int offsetD;
 	if(ci0>=0)
 		{
-		pC += ci0/ps*ps*sdc;
+		pC += ci0/ps*ps*sdd;
 		offsetC = ci0%ps;
 		}
 	else
@@ -2236,46 +2236,6 @@ void blasfeo_hp_ssyrk_ut(int m, int k, float alpha, struct blasfeo_smat *sA, int
 
 
 
-void blasfeo_hp_ssyr2k_ln(int m, int k, float alpha, struct blasfeo_smat *sA, int ai, int aj, struct blasfeo_smat *sB, int bi, int bj, float beta, struct blasfeo_smat *sC, int ci, int cj, struct blasfeo_smat *sD, int di, int dj)
-	{
-	float d_1 = 1.0;
-	blasfeo_hp_ssyrk_ln(m, k, alpha, sA, ai, aj, sB, bi, bj, beta, sC, ci, cj, sD, di, dj);
-	blasfeo_hp_ssyrk_ln(m, k, alpha, sB, bi, bj, sA, ai, aj, d_1, sD, di, dj, sD, di, dj);
-	return;
-	}
-
-
-
-void blasfeo_hp_ssyr2k_lt(int m, int k, float alpha, struct blasfeo_smat *sA, int ai, int aj, struct blasfeo_smat *sB, int bi, int bj, float beta, struct blasfeo_smat *sC, int ci, int cj, struct blasfeo_smat *sD, int di, int dj)
-	{
-	float d_1 = 1.0;
-	blasfeo_hp_ssyrk_lt(m, k, alpha, sA, ai, aj, sB, bi, bj, beta, sC, ci, cj, sD, di, dj);
-	blasfeo_hp_ssyrk_lt(m, k, alpha, sB, bi, bj, sA, ai, aj, d_1, sD, di, dj, sD, di, dj);
-	return;
-	}
-
-
-
-void blasfeo_hp_ssyr2k_un(int m, int k, float alpha, struct blasfeo_smat *sA, int ai, int aj, struct blasfeo_smat *sB, int bi, int bj, float beta, struct blasfeo_smat *sC, int ci, int cj, struct blasfeo_smat *sD, int di, int dj)
-	{
-	float d_1 = 1.0;
-	blasfeo_hp_ssyrk_un(m, k, alpha, sA, ai, aj, sB, bi, bj, beta, sC, ci, cj, sD, di, dj);
-	blasfeo_hp_ssyrk_un(m, k, alpha, sB, bi, bj, sA, ai, aj, d_1, sD, di, dj, sD, di, dj);
-	return;
-	}
-
-
-
-void blasfeo_hp_ssyr2k_ut(int m, int k, float alpha, struct blasfeo_smat *sA, int ai, int aj, struct blasfeo_smat *sB, int bi, int bj, float beta, struct blasfeo_smat *sC, int ci, int cj, struct blasfeo_smat *sD, int di, int dj)
-	{
-	float d_1 = 1.0;
-	blasfeo_hp_ssyrk_ut(m, k, alpha, sA, ai, aj, sB, bi, bj, beta, sC, ci, cj, sD, di, dj);
-	blasfeo_hp_ssyrk_ut(m, k, alpha, sB, bi, bj, sA, ai, aj, d_1, sD, di, dj, sD, di, dj);
-	return;
-	}
-
-
-
 #if defined(LA_HIGH_PERFORMANCE)
 
 
@@ -2465,34 +2425,6 @@ void blasfeo_ssyrk_un(int m, int k, float alpha, struct blasfeo_smat *sA, int ai
 void blasfeo_ssyrk_ut(int m, int k, float alpha, struct blasfeo_smat *sA, int ai, int aj, struct blasfeo_smat *sB, int bi, int bj, float beta, struct blasfeo_smat *sC, int ci, int cj, struct blasfeo_smat *sD, int di, int dj)
 	{
 	blasfeo_hp_ssyrk_ut(m, k, alpha, sA, ai, aj, sB, bi, bj, beta, sC, ci, cj, sD, di, dj);
-	}
-
-
-
-void blasfeo_ssyr2k_ln(int m, int k, float alpha, struct blasfeo_smat *sA, int ai, int aj, struct blasfeo_smat *sB, int bi, int bj, float beta, struct blasfeo_smat *sC, int ci, int cj, struct blasfeo_smat *sD, int di, int dj)
-	{
-	blasfeo_hp_ssyr2k_ln(m, k, alpha, sA, ai, aj, sB, bi, bj, beta, sC, ci, cj, sD, di, dj);
-	}
-
-
-
-void blasfeo_ssyr2k_lt(int m, int k, float alpha, struct blasfeo_smat *sA, int ai, int aj, struct blasfeo_smat *sB, int bi, int bj, float beta, struct blasfeo_smat *sC, int ci, int cj, struct blasfeo_smat *sD, int di, int dj)
-	{
-	blasfeo_hp_ssyr2k_lt(m, k, alpha, sA, ai, aj, sB, bi, bj, beta, sC, ci, cj, sD, di, dj);
-	}
-
-
-
-void blasfeo_ssyr2k_un(int m, int k, float alpha, struct blasfeo_smat *sA, int ai, int aj, struct blasfeo_smat *sB, int bi, int bj, float beta, struct blasfeo_smat *sC, int ci, int cj, struct blasfeo_smat *sD, int di, int dj)
-	{
-	blasfeo_hp_ssyr2k_un(m, k, alpha, sA, ai, aj, sB, bi, bj, beta, sC, ci, cj, sD, di, dj);
-	}
-
-
-
-void blasfeo_ssyr2k_ut(int m, int k, float alpha, struct blasfeo_smat *sA, int ai, int aj, struct blasfeo_smat *sB, int bi, int bj, float beta, struct blasfeo_smat *sC, int ci, int cj, struct blasfeo_smat *sD, int di, int dj)
-	{
-	blasfeo_hp_ssyr2k_ut(m, k, alpha, sA, ai, aj, sB, bi, bj, beta, sC, ci, cj, sD, di, dj);
 	}
 
 

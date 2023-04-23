@@ -53,7 +53,6 @@
 
 
 
-#define SQRT sqrt
 #define REAL double
 #define XMAT blasfeo_cm_dmat
 #define XMATEL BLASFEO_CM_DMATEL

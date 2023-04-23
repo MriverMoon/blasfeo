@@ -93,9 +93,7 @@ int main()
 #if defined(DOUBLE_PRECISION)
 
 	// maximum flops per cycle, double precision
-#if defined(TARGET_X64_INTEL_SKYLAKE_X)
-	const double flops_max = 32;
-#elif defined(TARGET_X64_INTEL_HASWELL)
+#if defined(TARGET_X64_INTEL_HASWELL)
 	const double flops_max = 16;
 #elif defined(TARGET_X64_INTEL_SANDY_BRIDGE)
 	const double flops_max = 8;
@@ -125,9 +123,7 @@ int main()
 
 #elif defined(SINGLE_PRECISION)
 
-#if defined(TARGET_X64_INTEL_SKYLAKE_X)
-	const double flops_max = 64; // 2x512 bit fma
-#elif defined(TARGET_X64_INTEL_HASWELL)
+#if defined(TARGET_X64_INTEL_HASWELL)
 	const double flops_max = 32; // 2x256 bit fma
 #elif defined(TARGET_X64_INTEL_SANDY_BRIDGE)
 	const double flops_max = 16; // 1x256 bit mul + 1x256 bit add
@@ -420,9 +416,9 @@ int main()
 #elif defined(GEMV_T)
 				blasfeo_dgemv_t(n, n, 1.0, &sA, 0, 0, &sx, 0, 0.0, &sz, 0, &sz, 0);
 #elif defined(TRMV_LNN)
-				blasfeo_dtrmv_lnn(n, &sA, 0, 0, &sx, 0, &sz, 0);
+				blasfeo_dtrmv_lnn(n, n, &sA, 0, 0, &sx, 0, &sz, 0);
 #elif defined(TRMV_LTN)
-				blasfeo_dtrmv_ltn(n, &sA, 0, 0, &sx, 0, &sz, 0);
+				blasfeo_dtrmv_ltn(n, n, &sA, 0, 0, &sx, 0, &sz, 0);
 #elif defined(TRSV_LNN)
 				blasfeo_dtrsv_lnn(n, &sB, 0, 0, &sx, 0, &sz, 0);
 #elif defined(TRSV_LTN)
@@ -525,9 +521,9 @@ int main()
 #elif defined(GEMV_T)
 				blasfeo_sgemv_t(n, n, 1.0, &sA, 0, 0, &sx, 0, 0.0, &sz, 0, &sz, 0);
 #elif defined(TRMV_LNN)
-				blasfeo_strmv_lnn(n, &sA, 0, 0, &sx, 0, &sz, 0);
+				blasfeo_strmv_lnn(n, n, &sA, 0, 0, &sx, 0, &sz, 0);
 #elif defined(TRMV_LTN)
-				blasfeo_strmv_ltn(n, &sA, 0, 0, &sx, 0, &sz, 0);
+				blasfeo_strmv_ltn(n, n, &sA, 0, 0, &sx, 0, &sz, 0);
 #elif defined(TRSV_LNN)
 				blasfeo_strsv_lnn(n, &sB, 0, 0, &sx, 0, &sz, 0);
 #elif defined(TRSV_LTN)

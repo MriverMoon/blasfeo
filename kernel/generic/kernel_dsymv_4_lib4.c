@@ -204,35 +204,16 @@ void kernel_dgemv_nt_4_vs_lib4(int kmax, double *alpha_n, double *alpha_t, doubl
 		}
 	
 	// store t
-	if(beta_t[0]==0.0)
+	z_t[0] = alpha_t[0]*y_t_0 + beta_t[0]*y_t[0];
+	if(km>1)
 		{
-		z_t[0] = alpha_t[0]*y_t_0;
-		if(km>1)
+		z_t[1] = alpha_t[0]*y_t_1 + beta_t[0]*y_t[1];
+		if(km>2)
 			{
-			z_t[1] = alpha_t[0]*y_t_1;
-			if(km>2)
+			z_t[2] = alpha_t[0]*y_t_2 + beta_t[0]*y_t[2];
+			if(km>3)
 				{
-				z_t[2] = alpha_t[0]*y_t_2;
-				if(km>3)
-					{
-					z_t[3] = alpha_t[0]*y_t_3;
-					}
-				}
-			}
-		}
-	else
-		{
-		z_t[0] = alpha_t[0]*y_t_0 + beta_t[0]*y_t[0];
-		if(km>1)
-			{
-			z_t[1] = alpha_t[0]*y_t_1 + beta_t[0]*y_t[1];
-			if(km>2)
-				{
-				z_t[2] = alpha_t[0]*y_t_2 + beta_t[0]*y_t[2];
-				if(km>3)
-					{
-					z_t[3] = alpha_t[0]*y_t_3 + beta_t[0]*y_t[3];
-					}
+				z_t[3] = alpha_t[0]*y_t_3 + beta_t[0]*y_t[3];
 				}
 			}
 		}
@@ -1047,10 +1028,4 @@ void kernel_dsymv_l_4_lib4(int kmax, double *alpha, double *A, int sda, double *
 
 
 
-//#if defined(BLAS_API)
-#if ( defined(BLAS_API) | ( defined(LA_HIGH_PERFORMANCE) & defined(MF_COLMAJ) ) )
-
-#include "kernel_dsymv_4_lib.c"
-
-#endif
 

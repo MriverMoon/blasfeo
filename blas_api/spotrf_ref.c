@@ -57,7 +57,7 @@
 #if defined(FORTRAN_BLAS_API)
 #define POTRF spotrf_
 #else
-#define POTRF blasfeo_lapack_spotrf
+#define POTRF blas_spotrf
 #endif
 
 

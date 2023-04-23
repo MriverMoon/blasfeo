@@ -46,29 +46,29 @@
 
 
 #if defined(FORTRAN_BLAS_API)
-#define blasfeo_lapack_dgesv dgesv_
-#define blasfeo_lapack_dgetrf dgetrf_
-#define blasfeo_lapack_dgetrs dgetrs_
+#define blas_dgesv dgesv_
+#define blas_dgetrf dgetrf_
+#define blas_dgetrs dgetrs_
 #endif
 
 
 
-void blasfeo_lapack_dgesv(int *pm, int *pn, double *A, int *plda, int *ipiv, double *B, int *pldb, int *info)
+void blas_dgesv(int *pm, int *pn, double *A, int *plda, int *ipiv, double *B, int *pldb, int *info)
 	{
 
 #if defined(PRINT_NAME)
-	printf("\nblasfeo_blas_dgesv %d %d %p %d %p %p %d %d\n", *pm, *pn, A, *plda, ipiv, B, *pldb, *info);
+	printf("\nblas_dgesv %d %d %p %d %p %p %d %d\n", *pm, *pn, A, *plda, ipiv, B, *pldb, *info);
 #endif
 
 	char c_n = 'n';
 
 	*info = 0;
 
-	blasfeo_lapack_dgetrf(pm, pm, A, plda, ipiv, info);
+	blas_dgetrf(pm, pm, A, plda, ipiv, info);
 
 	if(*info==0)
 		{
-		blasfeo_lapack_dgetrs(&c_n, pm, pn, A, plda, ipiv, B, pldb, info);
+		blas_dgetrs(&c_n, pm, pn, A, plda, ipiv, B, pldb, info);
 		}
 
 	return;

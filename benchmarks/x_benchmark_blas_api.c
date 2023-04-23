@@ -97,9 +97,7 @@ int main()
 #if defined(DOUBLE_PRECISION)
 
 	// maximum flops per cycle, double precision
-#if defined(TARGET_X64_INTEL_SKYLAKE_X)
-	const double flops_max = 32;
-#elif defined(TARGET_X64_INTEL_HASWELL)
+#if defined(TARGET_X64_INTEL_HASWELL)
 	const double flops_max = 16;
 #elif defined(TARGET_X64_INTEL_SANDY_BRIDGE)
 	const double flops_max = 8;
@@ -129,9 +127,7 @@ int main()
 
 #elif defined(SINGLE_PRECISION)
 
-#if defined(TARGET_X64_INTEL_SKYLAKE_X)
-	const double flops_max = 64; // 2x512 bit fma
-#elif defined(TARGET_X64_INTEL_HASWELL)
+#if defined(TARGET_X64_INTEL_HASWELL)
 	const double flops_max = 32; // 2x256 bit fma
 #elif defined(TARGET_X64_INTEL_SANDY_BRIDGE)
 	const double flops_max = 16; // 1x256 bit mul + 1x256 bit add
@@ -181,7 +177,7 @@ int main()
 	int ii, jj, ll;
 	int rep;
 
-	int nrep_in = 10; // number of benchmark batches
+	int nrep_in = 4; //10; // number of benchmark batches
 
 #if 1
 	int nn[] = {4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140, 144, 148, 152, 156, 160, 164, 168, 172, 176, 180, 184, 188, 192, 196, 200, 204, 208, 212, 216, 220, 224, 228, 232, 236, 240, 244, 248, 252, 256, 260, 264, 268, 272, 276, 280, 284, 288, 292, 296, 300, 304, 308, 312, 316, 320, 324, 328, 332, 336, 340, 344, 348, 352, 356, 360, 364, 368, 372, 376, 380, 384, 388, 392, 396, 400, 404, 408, 412, 416, 420, 424, 428, 432, 436, 440, 444, 448, 452, 456, 460, 500, 550, 600, 650, 700};
@@ -286,95 +282,95 @@ int main()
 #if defined(DOUBLE_PRECISION)
 
 #if defined(GEMM_NN)
-				blas_dgemm(&c_n, &c_n, &n, &n, &n, &r_1, A, &n, B, &n, &r_0, D, &n);
+				blasfeo_dgemm(&c_n, &c_n, &n, &n, &n, &r_1, A, &n, B, &n, &r_0, D, &n);
 #elif defined(GEMM_NT)
-				blas_dgemm(&c_n, &c_t, &n, &n, &n, &r_1, A, &n, B, &n, &r_0, D, &n);
+				blasfeo_dgemm(&c_n, &c_t, &n, &n, &n, &r_1, A, &n, B, &n, &r_0, D, &n);
 #elif defined(GEMM_TN)
-				blas_dgemm(&c_t, &c_n, &n, &n, &n, &r_1, A, &n, B, &n, &r_0, D, &n);
+				blasfeo_dgemm(&c_t, &c_n, &n, &n, &n, &r_1, A, &n, B, &n, &r_0, D, &n);
 #elif defined(GEMM_TT)
-				blas_dgemm(&c_t, &c_t, &n, &n, &n, &r_1, A, &n, B, &n, &r_0, D, &n);
+				blasfeo_dgemm(&c_t, &c_t, &n, &n, &n, &r_1, A, &n, B, &n, &r_0, D, &n);
 #elif defined(SYRK_LN)
-				blas_dsyrk(&c_l, &c_n, &n, &n, &r_1, A, &n, &r_0, D, &n);
+				blasfeo_dsyrk(&c_l, &c_n, &n, &n, &r_1, A, &n, &r_0, D, &n);
 #elif defined(SYRK_LT)
-				blas_dsyrk(&c_l, &c_t, &n, &n, &r_1, A, &n, &r_0, D, &n);
+				blasfeo_dsyrk(&c_l, &c_t, &n, &n, &r_1, A, &n, &r_0, D, &n);
 #elif defined(SYRK_UN)
-				blas_dsyrk(&c_u, &c_n, &n, &n, &r_1, A, &n, &r_0, D, &n);
+				blasfeo_dsyrk(&c_u, &c_n, &n, &n, &r_1, A, &n, &r_0, D, &n);
 #elif defined(SYRK_UT)
-				blas_dsyrk(&c_u, &c_t, &n, &n, &r_1, A, &n, &r_0, D, &n);
+				blasfeo_dsyrk(&c_u, &c_t, &n, &n, &r_1, A, &n, &r_0, D, &n);
 #elif defined(TRMM_LLNN)
-				blas_dtrmm(&c_l, &c_l, &c_n, &c_n, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrmm(&c_l, &c_l, &c_n, &c_n, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRMM_LLNU)
-				blas_dtrmm(&c_l, &c_l, &c_n, &c_u, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrmm(&c_l, &c_l, &c_n, &c_u, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRMM_LLTN)
-				blas_dtrmm(&c_l, &c_l, &c_t, &c_n, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrmm(&c_l, &c_l, &c_t, &c_n, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRMM_LLTU)
-				blas_dtrmm(&c_l, &c_l, &c_t, &c_u, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrmm(&c_l, &c_l, &c_t, &c_u, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRMM_LUNN)
-				blas_dtrmm(&c_l, &c_u, &c_n, &c_n, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrmm(&c_l, &c_u, &c_n, &c_n, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRMM_LUNU)
-				blas_dtrmm(&c_l, &c_u, &c_n, &c_u, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrmm(&c_l, &c_u, &c_n, &c_u, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRMM_LUTN)
-				blas_dtrmm(&c_l, &c_u, &c_t, &c_n, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrmm(&c_l, &c_u, &c_t, &c_n, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRMM_LUTU)
-				blas_dtrmm(&c_l, &c_u, &c_t, &c_u, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrmm(&c_l, &c_u, &c_t, &c_u, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRMM_RLNN)
-				blas_dtrmm(&c_r, &c_l, &c_n, &c_n, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrmm(&c_r, &c_l, &c_n, &c_n, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRMM_RLNU)
-				blas_dtrmm(&c_r, &c_l, &c_n, &c_u, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrmm(&c_r, &c_l, &c_n, &c_u, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRMM_RLTN)
-				blas_dtrmm(&c_r, &c_l, &c_t, &c_n, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrmm(&c_r, &c_l, &c_t, &c_n, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRMM_RLTU)
-				blas_dtrmm(&c_r, &c_l, &c_t, &c_u, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrmm(&c_r, &c_l, &c_t, &c_u, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRMM_RUNN)
-				blas_dtrmm(&c_r, &c_u, &c_n, &c_n, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrmm(&c_r, &c_u, &c_n, &c_n, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRMM_RUNU)
-				blas_dtrmm(&c_r, &c_u, &c_n, &c_u, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrmm(&c_r, &c_u, &c_n, &c_u, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRMM_RUTN)
-				blas_dtrmm(&c_r, &c_u, &c_t, &c_n, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrmm(&c_r, &c_u, &c_t, &c_n, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRMM_RUTU)
-				blas_dtrmm(&c_r, &c_u, &c_t, &c_u, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrmm(&c_r, &c_u, &c_t, &c_u, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRSM_LLNN)
-				blas_dtrsm(&c_l, &c_l, &c_n, &c_n, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrsm(&c_l, &c_l, &c_n, &c_n, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRSM_LLNU)
-				blas_dtrsm(&c_l, &c_l, &c_n, &c_u, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrsm(&c_l, &c_l, &c_n, &c_u, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRSM_LLTN)
-				blas_dtrsm(&c_l, &c_l, &c_t, &c_n, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrsm(&c_l, &c_l, &c_t, &c_n, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRSM_LLTU)
-				blas_dtrsm(&c_l, &c_l, &c_t, &c_u, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrsm(&c_l, &c_l, &c_t, &c_u, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRSM_LUNN)
-				blas_dtrsm(&c_l, &c_u, &c_n, &c_n, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrsm(&c_l, &c_u, &c_n, &c_n, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRSM_LUNU)
-				blas_dtrsm(&c_l, &c_u, &c_n, &c_u, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrsm(&c_l, &c_u, &c_n, &c_u, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRSM_LUTN)
-				blas_dtrsm(&c_l, &c_u, &c_t, &c_n, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrsm(&c_l, &c_u, &c_t, &c_n, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRSM_LUTU)
-				blas_dtrsm(&c_l, &c_u, &c_t, &c_u, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrsm(&c_l, &c_u, &c_t, &c_u, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRSM_RLNN)
-				blas_dtrsm(&c_r, &c_l, &c_n, &c_n, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrsm(&c_r, &c_l, &c_n, &c_n, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRSM_RLNU)
-				blas_dtrsm(&c_r, &c_l, &c_n, &c_u, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrsm(&c_r, &c_l, &c_n, &c_u, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRSM_RLTN)
-				blas_dtrsm(&c_r, &c_l, &c_t, &c_n, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrsm(&c_r, &c_l, &c_t, &c_n, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRSM_RLTU)
-				blas_dtrsm(&c_r, &c_l, &c_t, &c_u, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrsm(&c_r, &c_l, &c_t, &c_u, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRSM_RUNN)
-				blas_dtrsm(&c_r, &c_u, &c_n, &c_n, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrsm(&c_r, &c_u, &c_n, &c_n, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRSM_RUNU)
-				blas_dtrsm(&c_r, &c_u, &c_n, &c_u, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrsm(&c_r, &c_u, &c_n, &c_u, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRSM_RUTN)
-				blas_dtrsm(&c_r, &c_u, &c_t, &c_n, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrsm(&c_r, &c_u, &c_t, &c_n, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(TRSM_RUTU)
-				blas_dtrsm(&c_r, &c_u, &c_t, &c_u, &n, &n, &r_1, B, &n, D, &n);
+				blasfeo_dtrsm(&c_r, &c_u, &c_t, &c_u, &n, &n, &r_1, B, &n, D, &n);
 #elif defined(GELQF)
 #elif defined(GEQRF)
 #elif defined(GETRF_NOPIVOT)
 				blas_dgetrf_np(&n, &n, B, &n, &info);
 #elif defined(GETRF_ROWPIVOT)
-				blas_dgetrf(&n, &n, B, &n, ipiv, &info);
+				blasfeo_dgetrf(&n, &n, B, &n, ipiv, &info);
 #elif defined(POTRF_L)
-				blas_dpotrf(&c_l, &n, B, &n, &info);
+				blasfeo_dpotrf(&c_l, &n, B, &n, &info);
 #elif defined(POTRF_U)
-				blas_dpotrf(&c_u, &n, B, &n, &info);
+				blasfeo_dpotrf(&c_u, &n, B, &n, &info);
 #elif defined(GEMV_N)
 #elif defined(GEMV_T)
 #elif defined(TRMV_LNN)
@@ -390,13 +386,13 @@ int main()
 #elif defined(SINGLE_PRECISION)
 
 #if defined(GEMM_NN)
-				blas_sgemm(&c_n, &c_n, &n, &n, &n, &r_1, A, &n, B, &n, &r_0, D, &n);
+				blasfeo_sgemm(&c_n, &c_n, &n, &n, &n, &r_1, A, &n, B, &n, &r_0, D, &n);
 #elif defined(GEMM_NT)
-				blas_sgemm(&c_n, &c_t, &n, &n, &n, &r_1, A, &n, B, &n, &r_0, D, &n);
+				blasfeo_sgemm(&c_n, &c_t, &n, &n, &n, &r_1, A, &n, B, &n, &r_0, D, &n);
 #elif defined(GEMM_TN)
-				blas_sgemm(&c_t, &c_n, &n, &n, &n, &r_1, A, &n, B, &n, &r_0, D, &n);
+				blasfeo_sgemm(&c_t, &c_n, &n, &n, &n, &r_1, A, &n, B, &n, &r_0, D, &n);
 #elif defined(GEMM_TT)
-				blas_sgemm(&c_t, &c_t, &n, &n, &n, &r_1, A, &n, B, &n, &r_0, D, &n);
+				blasfeo_sgemm(&c_t, &c_t, &n, &n, &n, &r_1, A, &n, B, &n, &r_0, D, &n);
 #elif defined(SYRK_LN)
 #elif defined(SYRK_LT)
 #elif defined(SYRK_UN)

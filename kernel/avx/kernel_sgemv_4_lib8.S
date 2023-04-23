@@ -1172,7 +1172,7 @@ NAME:
 
 	subl	%eax, %r10d
 
-	sall	$ 2, %eax // *sizeof(float)
+	salq	$ 2, %rax // *sizeof(float)
 	addq	%rax, %r11
 	subq	$ 32, %r11
 	addq	%r12, %r11
@@ -1261,7 +1261,7 @@ NAME:
 
 	subl	%eax, %r10d
 
-	sall	$ 2, %eax // *sizeof(float)
+	salq	$ 2, %rax // *sizeof(float)
 	addq	%rax, %r11
 	subq	$ 32, %r11
 	addq	%r12, %r11
@@ -1336,17 +1336,10 @@ NAME:
 
 	// beta
 	vbroadcastss	0(%r11), %xmm15
-
-	vxorps		%ymm14, %ymm14, %ymm14 // 0.0
-	vucomiss	%xmm14, %xmm15 // beta==0.0 ?
-	je			0f // end
-
 	vmovups			0(%r12), %xmm14
 	vmulps			%xmm15, %xmm14, %xmm14
 	vaddps			%xmm0, %xmm14, %xmm0
-
-0:
-
+	
 #if MACRO_LEVEL>=1
 	.endm
 #else

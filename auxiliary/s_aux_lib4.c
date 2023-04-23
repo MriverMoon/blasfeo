@@ -1275,6 +1275,20 @@ size_t blasfeo_memsize_smat(int m, int n)
 
 
 
+size_t blasfeo_memsize_smat_ps(int ps, int m, int n)
+	{
+	int nc = S_PLD;
+	int al = ps*nc;
+	int pm = (m+ps-1)/ps*ps;
+	int cn = (n+nc-1)/nc*nc;
+	int tmp = m<n ? (m+al-1)/al*al : (n+al-1)/al*al; // al(min(m,n)) // XXX max ???
+	size_t memsize = (pm*cn+tmp)*sizeof(float);
+	memsize = (memsize + CACHE_LINE_SIZE - 1) / CACHE_LINE_SIZE * CACHE_LINE_SIZE;
+	return memsize;
+	}
+
+
+
 // return the memory size (in bytes) needed for the digonal of a strmat
 size_t blasfeo_memsize_diag_smat(int m, int n)
 	{
@@ -1298,6 +1312,31 @@ void blasfeo_create_smat(int m, int n, struct blasfeo_smat *sA, void *memory)
 	sA->m = m;
 	sA->n = n;
 	int pm = (m+bs-1)/bs*bs;
+	int cn = (n+nc-1)/nc*nc;
+	sA->pm = pm;
+	sA->cn = cn;
+	float *ptr = (float *) memory;
+	sA->pA = ptr;
+	ptr += pm*cn;
+	int tmp = m<n ? (m+al-1)/al*al : (n+al-1)/al*al; // al(min(m,n)) // XXX max ???
+	sA->dA = ptr;
+	ptr += tmp;
+	size_t memsize = (pm*cn+tmp)*sizeof(float);
+	sA->memsize = (memsize + CACHE_LINE_SIZE - 1) / CACHE_LINE_SIZE * CACHE_LINE_SIZE;
+	sA->use_dA = 0; // invalidate stored inverse diagonal
+	return;
+	}
+
+
+
+void blasfeo_create_smat_ps(int ps, int m, int n, struct blasfeo_smat *sA, void *memory)
+	{
+	sA->mem = memory;
+	int nc = S_PLD;
+	int al = ps*nc;
+	sA->m = m;
+	sA->n = n;
+	int pm = (m+ps-1)/ps*ps;
 	int cn = (n+nc-1)/nc*nc;
 	sA->pm = pm;
 	sA->cn = cn;
@@ -3798,19 +3837,6 @@ void blasfeo_svecex_sp(int m, float alpha, int *idx, struct blasfeo_svec *sx, in
 
 
 
-// z += alpha * x[idx]
-void blasfeo_svecadd_sp_in(int m, float alpha, int *idx, struct blasfeo_svec *sx, int xi, struct blasfeo_svec *sz, int zi)
-	{
-	float *x = sx->pa + xi;
-	float *z = sz->pa + zi;
-	int ii;
-	for(ii=0; ii<m; ii++)
-		z[ii] += alpha * x[idx[ii]];
-	return;
-	}
-
-
-
 // compute inf norm of vector
 void blasfeo_svecnrm_inf(int m, struct blasfeo_svec *sx, int xi, float *ptr_norm)
 	{
@@ -3820,12 +3846,11 @@ void blasfeo_svecnrm_inf(int m, struct blasfeo_svec *sx, int xi, float *ptr_norm
 	float tmp;
 	for(ii=0; ii<m; ii++)
 		{
-#if 0 //def USE_C99_MATH // does not propagate NaN !!!
-		norm = fmax(norm, fabs(x[ii]));
-#else // no c99
-		tmp = fabs(x[ii]);
-//		norm = tmp>norm ? tmp : norm; // does not propagate NaN !!!
-		norm = norm>=tmp ? norm : tmp;
+#ifdef USE_C99_MATH
+		norm = fmaxf(norm, fabsf(x[ii]));
+#else
+		tmp = fabsf(x[ii]);
+		norm = tmp>norm ? tmp : norm;
 #endif
 		}
 	*ptr_norm = norm;

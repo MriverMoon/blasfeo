@@ -36,7 +36,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <blasfeo_stdlib.h>
+#include "../include/blasfeo_stdlib.h"
+
+#if 0
+#include <malloc.h>
+#endif
+
+#if ! defined(OS_WINDOWS)
+int posix_memalign(void **memptr, size_t alignment, size_t size);
+#endif
 
 
 

@@ -70,19 +70,6 @@ void POTRF_L(int m, struct XMAT *sC, int ci, int cj, struct XMAT *sD, int di, in
 			}
 		}
 	POTRF(&cl, &m, pD, &ldd, &info);
-	if(info!=0)
-		{
-		if(info>0)
-			{
-			printf("\nxpotrf: leading minor of order %d is not positive definite, the factorization could not be completed.\n", info);
-			exit(1);
-			}
-		else
-			{
-			printf("\nxpotrf: the %d-th argument had an illegal value\n", -info);
-			exit(1);
-			}
-		}
 	return;
 	}
 
@@ -120,70 +107,7 @@ void POTRF_L_MN(int m, int n, struct XMAT *sC, int ci, int cj, struct XMAT *sD, 
 			}
 		}
 	POTRF(&cl, &n, pD, &ldd, &info);
-	if(info!=0)
-		{
-		if(info>0)
-			{
-			printf("\nxpotrf: leading minor of order %d is not positive definite, the factorization could not be completed.\n", info);
-			exit(1);
-			}
-		else
-			{
-			printf("\nxpotrf: the %d-th argument had an illegal value\n", -info);
-			exit(1);
-			}
-		}
 	TRSM(&cr, &cl, &ct, &cn, &mmn, &n, &d1, pD, &ldd, pD+n, &ldd);
-	return;
-	}
-
-
-
-// dpotrf
-void POTRF_U(int m, struct XMAT *sC, int ci, int cj, struct XMAT *sD, int di, int dj)
-	{
-	if(m<=0)
-		return;
-
-	// invalidate stored inverse diagonal of result matrix
-	sD->use_dA = 0;
-
-	int jj;
-	char cl = 'l';
-	char cn = 'n';
-	char cr = 'r';
-	char ct = 't';
-	char cu = 'u';
-	REAL d1 = 1.0;
-	REAL *pC = sC->pA+ci+cj*sC->m;
-	REAL *pD = sD->pA+di+dj*sD->m;
-	int i1 = 1;
-	int info;
-	int tmp;
-	int ldc = sC->m;
-	int ldd = sD->m;
-	if(!(pC==pD))
-		{
-		for(jj=0; jj<m; jj++)
-			{
-			tmp = jj+1;
-			COPY(&tmp, pC+jj*ldc, &i1, pD+jj*ldd, &i1);
-			}
-		}
-	POTRF(&cu, &m, pD, &ldd, &info);
-	if(info!=0)
-		{
-		if(info>0)
-			{
-			printf("\nxpotrf: leading minor of order %d is not positive definite, the factorization could not be completed.\n", info);
-			exit(1);
-			}
-		else
-			{
-			printf("\nxpotrf: the %d-th argument had an illegal value\n", -info);
-			exit(1);
-			}
-		}
 	return;
 	}
 
@@ -230,19 +154,6 @@ void SYRK_POTRF_LN(int m, int k, struct XMAT *sA, int ai, int aj, struct XMAT *s
 		GEMM(&cn, &ct, &m, &m, &k, &d1, pA, &lda, pB, &ldb, &d1, pD, &ldd);
 		POTRF(&cl, &m, pD, &ldd, &info);
 		}
-	if(info!=0)
-		{
-		if(info>0)
-			{
-			printf("\nxpotrf: leading minor of order %d is not positive definite, the factorization could not be completed.\n", info);
-			exit(1);
-			}
-		else
-			{
-			printf("\nxpotrf: the %d-th argument had an illegal value\n", -info);
-			exit(1);
-			}
-		}
 	return;
 	}
 
@@ -285,38 +196,12 @@ void SYRK_POTRF_LN_MN(int m, int n, int k, struct XMAT *sA, int ai, int aj, stru
 		SYRK(&cl, &cn, &n, &k, &d1, pA, &lda, &d1, pD, &ldd);
 		GEMM(&cn, &ct, &mmn, &n, &k, &d1, pA+n, &lda, pB, &ldb, &d1, pD+n, &ldd);
 		POTRF(&cl, &n, pD, &ldd, &info);
-		if(info!=0)
-			{
-			if(info>0)
-				{
-				printf("\nxpotrf: leading minor of order %d is not positive definite, the factorization could not be completed.\n", info);
-				exit(1);
-				}
-			else
-				{
-				printf("\nxpotrf: the %d-th argument had an illegal value\n", -info);
-				exit(1);
-				}
-			}
 		TRSM(&cr, &cl, &ct, &cn, &mmn, &n, &d1, pD, &ldd, pD+n, &ldd);
 		}
 	else
 		{
 		GEMM(&cn, &ct, &m, &n, &k, &d1, pA, &lda, pB, &ldb, &d1, pD, &ldd);
 		POTRF(&cl, &n, pD, &ldd, &info);
-		if(info!=0)
-			{
-			if(info>0)
-				{
-				printf("\nxpotrf: leading minor of order %d is not positive definite, the factorization could not be completed.\n", info);
-				exit(1);
-				}
-			else
-				{
-				printf("\nxpotrf: the %d-th argument had an illegal value\n", -info);
-				exit(1);
-				}
-			}
 		TRSM(&cr, &cl, &ct, &cn, &mmn, &n, &d1, pD, &ldd, pD+n, &ldd);
 		}
 	return;
@@ -556,30 +441,12 @@ void ORGLQ(int m, int n, int k, struct XMAT *sC, int ci, int cj, struct XMAT *sD
 
 
 // LQ factorization with positive diagonal elements
-// XXX this is a hack that only returns the correct L matrix
-// TODO fix also Q !!!!
 void GELQF_PD(int m, int n, struct XMAT *sC, int ci, int cj, struct XMAT *sD, int di, int dj, void *work)
 	{
-//	if(m<=0 | n<=0)
-//		return;
-//	printf("\nblasfeo_gelqf_pd: feature not implemented yet\n");
-//	exit(1);
-	GELQF(m, n, sC, ci, cj, sD, di, dj, work);
-	int ldd = sD->m;
-	REAL *pD = sD->pA+di+dj*ldd;
-	int ii, jj;
-	int imax = m<=n ? m : n;
-	for(ii=0; ii<imax; ii++)
-		{
-		if(pD[ii+ldd*ii]<0.0)
-			{
-			for(jj=ii; jj<m; jj++)
-				{
-				pD[jj+ldd*ii] = - pD[jj+ldd*ii];
-				}
-			}
-		}
-	return;
+	if(m<=0 | n<=0)
+		return;
+	printf("\nblasfeo_gelqf_pd: feature not implemented yet\n");
+	exit(1);
 	}
 
 

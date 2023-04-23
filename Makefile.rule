@@ -49,10 +49,7 @@ CURRENT_DIR := $(patsubst %/,%,$(dir $(MAKEFILE_PATH)))
 
 # Select target architecture (TARGET)
 #
-# X64_INTEL_SKYLAKE_X: x86_64 architecture with AVX512 (F+VL) ISA (64 bit OS)
-# Code optimized for Intel Skylake-X architecture with 2 512-bit FMA pipes.
-#
-# X64_INTEL_HASWELL: x86_64 architecture with AVX2 and FMA ISAs (64 bit OS)
+# X64_INTEL_HASWELL: x86_64 architecture with AVX2 and FMA ISA (64 bit OS)
 # Code optimized for Intel Haswell, Intel Skylake, AMD Zen, AMD Zen2 and AMD Zen3 architectures.
 #
 # X64_INTEL_SANDY_BRIDGE : x86_64 architecture with AVX ISA (64 bit OS)
@@ -61,7 +58,7 @@ CURRENT_DIR := $(patsubst %/,%,$(dir $(MAKEFILE_PATH)))
 # X64_INTEL_CORE : x86_64 architecture with SSE3 ISA (64 bit OS)
 # Code optimized for Intel Core archiecture.
 #
-# X64_AMD_BULLDOZER : x86_64 architecture with AVX and FMA ISAs (64 bit OS)
+# X64_AMD_BULLDOZER : x86_64 architecture with AVX and FMA ISA (64 bit OS)
 # Code optimized for AMD Bulldozer.
 #
 # X86_AMD_JAGUAR : x86 architecture with AVX ISA (32 bit OS)
@@ -69,9 +66,6 @@ CURRENT_DIR := $(patsubst %/,%,$(dir $(MAKEFILE_PATH)))
 #
 # X86_AMD_BARCELONA : x86 architecture with SSE3 ISA (32 bit OS)
 # Code optimized for AMD Barcelona.
-#
-# ARMV8A_APPLE_M1 : ARMv8A architecture with NEON (64 bit OS)
-# Code optimized for Apple M1.
 #
 # ARMV8A_ARM_CORTEX_A76 : ARMv8A architecture with NEON (64 bit OS)
 # Code optimized for ARM Cortex A76.
@@ -97,11 +91,9 @@ CURRENT_DIR := $(patsubst %/,%,$(dir $(MAKEFILE_PATH)))
 # ARMV7A_ARM_CORTEX_A7 : ARMv7A architecture with NEON-VFPv4 ISA (32 bit OS)
 # Code optimized for ARM Cortex A7.
 #
-# GENERIC : generic architecture, plain C code running on virtually every target but not specialized to any.
-# Choose one of the above optimized targets for better performance on specific architectures.
+# GENERIC : generic architecture, plain C code.
 #
 #
-# TARGET = X64_INTEL_SKYLAKE_X
 TARGET = X64_INTEL_HASWELL
 # TARGET = X64_INTEL_SANDY_BRIDGE
 # TARGET = X64_INTEL_CORE
@@ -109,8 +101,6 @@ TARGET = X64_INTEL_HASWELL
 # TARGET = X64_AMD_BULLDOZER
 # TARGET = X86_AMD_JAGUAR
 # TARGET = X86_AMD_BARCELONA
-#
-# TARGET = ARMV8A_APPLE_M1
 #
 # TARGET = ARMV8A_ARM_CORTEX_A76
 # TARGET = ARMV8A_ARM_CORTEX_A73
@@ -152,11 +142,8 @@ MF = PANELMAJ
 BLAS_API = 1
 
 # Export standard FORTRAN namings for BLAS API routines
-# 0 : routines namings are in the form blasfeo_blas_dgemm and blasfeo_lapack_dpotrf
-# 1 : routines namings are in the form dgemm_ and dpotrf_
-# and export standard C namings for CBLAS API routines
-# 0 : routines namings are in the form blasfeo_cblas_dgemm
-# 1 : routines namings are in the form cblas_dgemm
+# 0 : routines namings are in the form blas_dgemm
+# 1 : routines namings are in the form dgemm_
 #
 FORTRAN_BLAS_API = 0
 # FORTRAN_BLAS_API = 1
@@ -191,7 +178,6 @@ EXTERNAL_BLAS = 0
 # EXTERNAL_BLAS = BLIS
 # EXTERNAL_BLAS = ATLAS
 # EXTERNAL_BLAS = ARMPL
-# EXTERNAL_BLAS = ACCELERATE
 include $(CURRENT_DIR)/Makefile.external_blas
 
 # Select operating system (automatic selection for LINUX and MAC)
@@ -223,7 +209,7 @@ FALLBACK_TO_EXTERNAL_BLAS = 0
 
 # Maximum inner product length K for buffer allocation on stack (decrease this value if stack size is exceeded)
 #
-K_MAX_STACK = 300
+K_MAX_STACK = 1000
 
 # Macro level (code size vs performance in assembly kernels):
 # 0 : no macro (min code size)
@@ -249,11 +235,6 @@ EXT_DEP = 1
 SANDBOX_MODE = 0
 # SANDBOX_MODE = 1
 
-# Enables the compilation of experimental routines
-#
-EXPERIMENTAL = 0
-# EXPERIMENTAL = 1
-
 # Enable on-line checks for matrix and vector dimensions (experimental)
 #
 RUNTIME_CHECKS = 0
@@ -266,16 +247,16 @@ PRINT_NAME = 0
 
 # Select the packing algorithm (limited to colmaj dgemm and sgemm ATM)
 # AUTO   : automatic switching between packing algorithms
-# ALG_0  : no packing
-# ALG_M1 : pack A
-# ALG_N1 : pack B
-# ALG_2  : pack A and B
+# ALG_2  : no packing
+# ALG_M0 : pack A
+# ALG_N0 : pack B
+# ALG_1  : pack A and B
 #
 PACKING_ALG = AUTO
-# PACKING_ALG = ALG_0
-# PACKING_ALG = ALG_M1
-# PACKING_ALG = ALG_N1
 # PACKING_ALG = ALG_2
+# PACKING_ALG = ALG_M0
+# PACKING_ALG = ALG_N0
+# PACKING_ALG = ALG_1
 
 # C Compiler
 #
@@ -284,7 +265,6 @@ CC ?= gcc
 # CC = x86_64-w64-mingw32-gcc
 # CC = arm-linux-gnueabihf-gcc
 # CC = /opt/ndk/bin/aarch64-linux-android-gcc
-# CC = /home/gianluca/android-ndk-r23b/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android31-clang
 
 # archive routine
 #
@@ -382,11 +362,11 @@ ASFLAGS += -DFALLBACK_TO_EXTERNAL_BLAS
 endif # FALLBACK_TO_EXTERNAL_BLAS
 endif # BLAS_API
 
-#ifeq ($(CBLAS_API), 1)
-#ifeq ($(FORTRAN_BLAS_API), 0)
-#$(error Cannot expose non-FORTRAN style BLAS_API when building CBLAS_API)
-#endif
-#endif
+ifeq ($(CBLAS_API), 1) 
+ifeq ($(FORTRAN_BLAS_API), 0)
+$(error Cannot expose non-FORTRAN style BLAS_API when building CBLAS_API)
+endif
+endif
 
 ifeq ($(LAPACKE_API), 1) 
 ifeq ($(FORTRAN_BLAS_API), 0)
@@ -475,7 +455,7 @@ endif
 
 CFLAGS += $(INCLUDE_EXTERNAL_BLAS)
 ifeq ($(EXTERNAL_BLAS), 0)
-CFLAGS  += -DEXTERNAL_BLAS_NONE
+CFLAGS  +=
 endif
 ifeq ($(EXTERNAL_BLAS), SYSTEM)
 CFLAGS  += -DEXTERNAL_BLAS_SYSTEM
@@ -492,22 +472,16 @@ endif
 ifeq ($(EXTERNAL_BLAS), MKL)
 CFLAGS  += -DEXTERNAL_BLAS_MKL -std=c99 -m64 -DMKL_DIRECT_CALL_SEQ
 endif
-ifeq ($(EXTERNAL_BLAS), ATLAS)
-CFLAGS  += -DEXTERNAL_BLAS_ATLAS
-endif
 ifeq ($(EXTERNAL_BLAS), ARMPL)
 CFLAGS  += -DEXTERNAL_BLAS_ARMPL
 endif
-ifeq ($(EXTERNAL_BLAS), ACCELERATE)
-CFLAGS  += -DEXTERNAL_BLAS_ACCELERATE
+ifeq ($(EXTERNAL_BLAS), ATLAS)
+CFLAGS  += -DEXTERNAL_BLAS_ATLAS
 endif
 # TODO remove and fix tests
 # CFLAGS  += -DEXTERNAL_BLAS=$(EXTERNAL_BLAS)
 
 # Architecture-specific flags
-ifeq ($(TARGET), X64_INTEL_SKYLAKE_X)
-CFLAGS  += -m64 -mavx512f -mavx512vl -mfma -DTARGET_X64_INTEL_SKYLAKE_X
-endif
 ifeq ($(TARGET), X64_INTEL_HASWELL)
 CFLAGS  += -m64 -mavx2 -mfma -DTARGET_X64_INTEL_HASWELL
 endif
@@ -527,10 +501,6 @@ endif
 ifeq ($(TARGET), X86_AMD_BARCELONA)
 CFLAGS  += -m32 -msse3 -DTARGET_X86_AMD_BARCELONA
 ASFLAGS += -m32 -msse3 -DTARGET_X86_AMD_BARCELONA
-endif
-ifeq ($(TARGET), ARMV8A_APPLE_M1)
-CFLAGS  += -march=armv8-a+crc+crypto+simd -DTARGET_ARMV8A_APPLE_M1 -DTARGET_ARMV8A_ARM_CORTEX_A57
-ASFLAGS += -DTARGET_ARMV8A_APPLE_M1 -DTARGET_ARMV8A_ARM_CORTEX_A57
 endif
 ifeq ($(TARGET), ARMV8A_ARM_CORTEX_A76)
 CFLAGS  += -march=armv8-a+crc+crypto+simd -DTARGET_ARMV8A_ARM_CORTEX_A76 -DTARGET_ARMV8A_ARM_CORTEX_A57

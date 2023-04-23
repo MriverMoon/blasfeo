@@ -44,7 +44,7 @@
 #elif defined(EXTERNAL_BLAS_ARMPL)
 #include "armpl.h"
 #else
-#include <d_blas.h>
+#include "../include/d_blas.h"
 #endif
 #endif
 
@@ -64,9 +64,7 @@
 #define SYMV_L blasfeo_dsymv_l
 #define SYMV_L_MN blasfeo_dsymv_l_mn
 #define TRMV_LNN blasfeo_dtrmv_lnn
-#define TRMV_LNN_MN blasfeo_dtrmv_lnn_mn
 #define TRMV_LTN blasfeo_dtrmv_ltn
-#define TRMV_LTN_MN blasfeo_dtrmv_ltn_mn
 #define TRMV_UNN blasfeo_dtrmv_unn
 #define TRMV_UTN blasfeo_dtrmv_utn
 #define TRSV_LNN blasfeo_dtrsv_lnn
@@ -77,14 +75,12 @@
 #define TRSV_LTU blasfeo_dtrsv_ltu
 #define TRSV_UNN blasfeo_dtrsv_unn
 #define TRSV_UTN blasfeo_dtrsv_utn
-#define GER blasfeo_dger
 
 #define COPY dcopy_
 #define GEMV dgemv_
 #define SYMV dsymv_
 #define TRMV dtrmv_
 #define TRSV dtrsv_
-#define GER_ dger_
 
 
 

@@ -5133,8 +5133,7 @@
 // void kernel_sgemm_nt_8x4_lib44cc(int kmax, float *alpha, float *A, int sda, float *B, float *beta, float *C, int ldc, float *D, int ldd)
 
 	.align	4
-	GLOB(kernel_sgemm_nt_8x4_lib44cc)
-	FUN_START(kernel_sgemm_nt_8x4_lib44cc)
+	GLOB_FUN_START(kernel_sgemm_nt_8x4_lib44cc)
 	
 
 
@@ -5156,7 +5155,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_8X4_LIB4
 #else
-	CALL(inner_kernel_gemm_add_nt_8x4_lib4)
+	bl	inner_kernel_gemm_add_nt_8x4_lib4
 #endif
 
 
@@ -5169,7 +5168,7 @@
 #if MACRO_LEVEL>=1
 	INNER_PREFETCH_8X4_LIB
 #else
-	CALL(inner_prefetch_8x4_lib)
+	bl inner_prefetch_8x4_lib
 #endif
 
 
@@ -5184,7 +5183,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_8X4_LIB
 #else
-	CALL(inner_scale_ab_8x4_lib)
+	bl inner_scale_ab_8x4_lib
 #endif
 
 
@@ -5197,7 +5196,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_8X4_LIB
 #else
-	CALL(inner_store_8x4_lib)
+	bl inner_store_8x4_lib
 #endif
 
 
@@ -5218,8 +5217,7 @@
 // void kernel_sgemm_nt_8x4_vs_lib44cc(int kmax, float *alpha, float *A, int sda, float *B, float *beta, float *C, int ldc, float *D, int ldd, int m1, int n1)
 
 	.align	4
-	GLOB(kernel_sgemm_nt_8x4_vs_lib44cc)
-	FUN_START(kernel_sgemm_nt_8x4_vs_lib44cc)
+	GLOB_FUN_START(kernel_sgemm_nt_8x4_vs_lib44cc)
 	
 
 
@@ -5241,7 +5239,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_8X4_LIB4
 #else
-	CALL(inner_kernel_gemm_add_nt_8x4_lib4)
+	bl	inner_kernel_gemm_add_nt_8x4_lib4
 #endif
 
 
@@ -5254,7 +5252,7 @@
 #if MACRO_LEVEL>=1
 //	INNER_PREFETCH_8X4_LIB
 #else
-//	CALL(inner_prefetch_8x4_lib)
+//	bl inner_prefetch_8x4_lib
 #endif
 
 
@@ -5271,7 +5269,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_8X4_VS_LIB
 #else
-	CALL(inner_scale_ab_8x4_vs_lib)
+	bl inner_scale_ab_8x4_vs_lib
 #endif
 
 
@@ -5286,7 +5284,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_8X4_VS_LIB
 #else
-	CALL(inner_store_8x4_vs_lib)
+	bl inner_store_8x4_vs_lib
 #endif
 
 
@@ -5307,8 +5305,7 @@
 // void kernel_sgemm_nt_8x4_lib4ccc(int kmax, double *alpha, double *A, int sda, double *B, int ldb, double *beta, double *C, int ldc, double *D, int ldd)
 
 	.align	4
-	GLOB(kernel_sgemm_nt_8x4_lib4ccc)
-	FUN_START(kernel_sgemm_nt_8x4_lib4ccc)
+	GLOB_FUN_START(kernel_sgemm_nt_8x4_lib4ccc)
 	
 
 
@@ -5332,7 +5329,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_8X4_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nt_8x4_lib4c)
+	bl	inner_kernel_gemm_add_nt_8x4_lib4c
 #endif
 
 
@@ -5345,7 +5342,7 @@
 #if MACRO_LEVEL>=1
 	INNER_PREFETCH_8X4_LIB
 #else
-	CALL(inner_prefetch_8x4_lib)
+	bl inner_prefetch_8x4_lib
 #endif
 
 
@@ -5360,7 +5357,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_8X4_LIB
 #else
-	CALL(inner_scale_ab_8x4_lib)
+	bl inner_scale_ab_8x4_lib
 #endif
 
 
@@ -5373,7 +5370,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_8X4_LIB
 #else
-	CALL(inner_store_8x4_lib)
+	bl inner_store_8x4_lib
 #endif
 
 
@@ -5394,8 +5391,7 @@
 // void kernel_sgemm_nt_8x4_vs_lib4ccc(int kmax, double *alpha, double *A, int sda, double *B, int ldb, double *beta, double *C, int ldc, double *D, int ldd, int m1, int n1)
 
 	.align	4
-	GLOB(kernel_sgemm_nt_8x4_vs_lib4ccc)
-	FUN_START(kernel_sgemm_nt_8x4_vs_lib4ccc)
+	GLOB_FUN_START(kernel_sgemm_nt_8x4_vs_lib4ccc)
 	
 
 
@@ -5423,7 +5419,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_8X1_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nt_8x1_lib4c)
+	bl	inner_kernel_gemm_add_nt_8x1_lib4c
 #endif
 	
 	b		103f
@@ -5437,7 +5433,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_8X2_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nt_8x2_lib4c)
+	bl	inner_kernel_gemm_add_nt_8x2_lib4c
 #endif
 	
 	b		103f
@@ -5451,7 +5447,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_8X3_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nt_8x3_lib4c)
+	bl	inner_kernel_gemm_add_nt_8x3_lib4c
 #endif
 	
 	b		103f
@@ -5461,7 +5457,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_8X4_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nt_8x4_lib4c)
+	bl	inner_kernel_gemm_add_nt_8x4_lib4c
 #endif
 
 103:
@@ -5476,7 +5472,7 @@
 #if MACRO_LEVEL>=1
 //	INNER_PREFETCH_8X4_LIB
 #else
-//	CALL(inner_prefetch_8x4_lib)
+//	bl inner_prefetch_8x4_lib
 #endif
 
 
@@ -5493,7 +5489,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_8X4_VS_LIB
 #else
-	CALL(inner_scale_ab_8x4_vs_lib)
+	bl inner_scale_ab_8x4_vs_lib
 #endif
 
 
@@ -5508,7 +5504,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_8X4_VS_LIB
 #else
-	CALL(inner_store_8x4_vs_lib)
+	bl inner_store_8x4_vs_lib
 #endif
 
 
@@ -5529,8 +5525,7 @@
 // void kernel_sgemm_nt_4x8_libc4cc(int kmax, double *alpha, double *A, int lda, double *B, int sdb, double *beta, double *C, int ldc, double *D, int ldd)
 
 	.align	4
-	GLOB(kernel_sgemm_nt_4x8_libc4cc)
-	FUN_START(kernel_sgemm_nt_4x8_libc4cc)
+	GLOB_FUN_START(kernel_sgemm_nt_4x8_libc4cc)
 	
 
 
@@ -5554,7 +5549,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_8X4_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nt_8x4_lib4c)
+	bl	inner_kernel_gemm_add_nt_8x4_lib4c
 #endif
 
 
@@ -5567,7 +5562,7 @@
 #if MACRO_LEVEL>=1
 	INNER_PREFETCH_4X8_LIB
 #else
-	CALL(inner_prefetch_4x8_lib)
+	bl inner_prefetch_4x8_lib
 #endif
 
 
@@ -5582,14 +5577,14 @@
 #if MACRO_LEVEL>=1
 	INNER_TRAN_8X4_LIB
 #else
-	CALL(inner_tran_8x4_lib)
+	bl inner_tran_8x4_lib
 #endif
 
 
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_4X8_LIB
 #else
-	CALL(inner_scale_ab_4x8_lib)
+	bl inner_scale_ab_4x8_lib
 #endif
 
 
@@ -5602,7 +5597,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_4X8_LIB
 #else
-	CALL(inner_store_4x8_lib)
+	bl inner_store_4x8_lib
 #endif
 
 
@@ -5623,8 +5618,7 @@
 // void kernel_sgemm_nt_4x8_vs_libc4cc(int kmax, double *alpha, double *A, int lda, double *B, int sdb, double *beta, double *C, int ldc, double *D, int ldd, int m1, int n1)
 
 	.align	4
-	GLOB(kernel_sgemm_nt_4x8_vs_libc4cc)
-	FUN_START(kernel_sgemm_nt_4x8_vs_libc4cc)
+	GLOB_FUN_START(kernel_sgemm_nt_4x8_vs_libc4cc)
 	
 
 
@@ -5652,7 +5646,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_8X1_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nt_8x1_lib4c)
+	bl	inner_kernel_gemm_add_nt_8x1_lib4c
 #endif
 	
 	b		103f
@@ -5666,7 +5660,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_8X2_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nt_8x2_lib4c)
+	bl	inner_kernel_gemm_add_nt_8x2_lib4c
 #endif
 	
 	b		103f
@@ -5680,7 +5674,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_8X3_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nt_8x3_lib4c)
+	bl	inner_kernel_gemm_add_nt_8x3_lib4c
 #endif
 	
 	b		103f
@@ -5690,7 +5684,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_8X4_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nt_8x4_lib4c)
+	bl	inner_kernel_gemm_add_nt_8x4_lib4c
 #endif
 
 103:
@@ -5705,7 +5699,7 @@
 #if MACRO_LEVEL>=1
 //	INNER_PREFETCH_4X8_LIB
 #else
-//	CALL(inner_prefetch_4x8_lib)
+//	bl inner_prefetch_4x8_lib
 #endif
 
 
@@ -5722,14 +5716,14 @@
 #if MACRO_LEVEL>=1
 	INNER_TRAN_8X4_LIB
 #else
-	CALL(inner_tran_8x4_lib)
+	bl inner_tran_8x4_lib
 #endif
 
 
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_4X8_VS_LIB
 #else
-	CALL(inner_scale_ab_4x8_vs_lib)
+	bl inner_scale_ab_4x8_vs_lib
 #endif
 
 
@@ -5744,7 +5738,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_4X8_VS_LIB
 #else
-	CALL(inner_store_4x8_vs_lib)
+	bl inner_store_4x8_vs_lib
 #endif
 
 
@@ -5765,8 +5759,7 @@
 // void kernel_sgemm_nn_8x4_lib4ccc(int kmax, double *alpha, double *A, int sda, double *B, int ldb, double *beta, double *C, int ldc, double *D, int ldd)
 
 	.align	4
-	GLOB(kernel_sgemm_nn_8x4_lib4ccc)
-	FUN_START(kernel_sgemm_nn_8x4_lib4ccc)
+	GLOB_FUN_START(kernel_sgemm_nn_8x4_lib4ccc)
 	
 
 
@@ -5790,7 +5783,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NN_8X4_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nn_8x4_lib4c)
+	bl	inner_kernel_gemm_add_nn_8x4_lib4c
 #endif
 
 
@@ -5803,7 +5796,7 @@
 #if MACRO_LEVEL>=1
 	INNER_PREFETCH_8X4_LIB
 #else
-	CALL(inner_prefetch_8x4_lib)
+	bl inner_prefetch_8x4_lib
 #endif
 
 
@@ -5818,7 +5811,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_8X4_LIB
 #else
-	CALL(inner_scale_ab_8x4_lib)
+	bl inner_scale_ab_8x4_lib
 #endif
 
 
@@ -5831,7 +5824,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_8X4_LIB
 #else
-	CALL(inner_store_8x4_lib)
+	bl inner_store_8x4_lib
 #endif
 
 
@@ -5852,8 +5845,7 @@
 // void kernel_sgemm_nn_8x4_vs_lib4ccc(int kmax, double *alpha, double *A, int sda, double *B, int ldb, double *beta, double *C, int ldc, double *D, int ldd, int m1, int n1)
 
 	.align	4
-	GLOB(kernel_sgemm_nn_8x4_vs_lib4ccc)
-	FUN_START(kernel_sgemm_nn_8x4_vs_lib4ccc)
+	GLOB_FUN_START(kernel_sgemm_nn_8x4_vs_lib4ccc)
 	
 
 
@@ -5881,7 +5873,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NN_8X1_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nn_8x1_lib4c)
+	bl	inner_kernel_gemm_add_nn_8x1_lib4c
 #endif
 	
 	b		103f
@@ -5895,7 +5887,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NN_8X2_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nn_8x2_lib4c)
+	bl	inner_kernel_gemm_add_nn_8x2_lib4c
 #endif
 	
 	b		103f
@@ -5909,7 +5901,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NN_8X3_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nn_8x3_lib4c)
+	bl	inner_kernel_gemm_add_nn_8x3_lib4c
 #endif
 	
 	b		103f
@@ -5919,7 +5911,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NN_8X4_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nn_8x4_lib4c)
+	bl	inner_kernel_gemm_add_nn_8x4_lib4c
 #endif
 
 103:
@@ -5934,7 +5926,7 @@
 #if MACRO_LEVEL>=1
 //	INNER_PREFETCH_8X4_LIB
 #else
-//	CALL(inner_prefetch_8x4_lib)
+//	bl inner_prefetch_8x4_lib
 #endif
 
 
@@ -5951,7 +5943,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_8X4_VS_LIB
 #else
-	CALL(inner_scale_ab_8x4_vs_lib)
+	bl inner_scale_ab_8x4_vs_lib
 #endif
 
 
@@ -5966,7 +5958,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_8X4_VS_LIB
 #else
-	CALL(inner_store_8x4_vs_lib)
+	bl inner_store_8x4_vs_lib
 #endif
 
 
@@ -5987,8 +5979,7 @@
 // void kernel_sgemm_tt_4x8_libc4cc(int kmax, double *alpha, double *A, int lda, double *B, int sdb, double *beta, double *C, int ldc, double *D, int ldd)
 
 	.align	4
-	GLOB(kernel_sgemm_tt_4x8_libc4cc)
-	FUN_START(kernel_sgemm_tt_4x8_libc4cc)
+	GLOB_FUN_START(kernel_sgemm_tt_4x8_libc4cc)
 	
 
 
@@ -6012,7 +6003,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NN_8X4_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nn_8x4_lib4c)
+	bl	inner_kernel_gemm_add_nn_8x4_lib4c
 #endif
 
 
@@ -6025,7 +6016,7 @@
 #if MACRO_LEVEL>=1
 	INNER_PREFETCH_4X8_LIB
 #else
-	CALL(inner_prefetch_4x8_lib)
+	bl inner_prefetch_4x8_lib
 #endif
 
 
@@ -6040,14 +6031,14 @@
 #if MACRO_LEVEL>=1
 	INNER_TRAN_8X4_LIB
 #else
-	CALL(inner_tran_8x4_lib)
+	bl inner_tran_8x4_lib
 #endif
 
 
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_4X8_LIB
 #else
-	CALL(inner_scale_ab_4x8_lib)
+	bl inner_scale_ab_4x8_lib
 #endif
 
 
@@ -6060,7 +6051,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_4X8_LIB
 #else
-	CALL(inner_store_4x8_lib)
+	bl inner_store_4x8_lib
 #endif
 
 
@@ -6081,8 +6072,7 @@
 // void kernel_sgemm_tt_4x8_vs_libc4cc(int kmax, double *alpha, double *A, int lda, double *B, int sdb, double *beta, double *C, int ldc, double *D, int ldd, int m1, int n1)
 
 	.align	4
-	GLOB(kernel_sgemm_tt_4x8_vs_libc4cc)
-	FUN_START(kernel_sgemm_tt_4x8_vs_libc4cc)
+	GLOB_FUN_START(kernel_sgemm_tt_4x8_vs_libc4cc)
 	
 
 
@@ -6110,7 +6100,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NN_8X1_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nn_8x1_lib4c)
+	bl	inner_kernel_gemm_add_nn_8x1_lib4c
 #endif
 	
 	b		103f
@@ -6124,7 +6114,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NN_8X2_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nn_8x2_lib4c)
+	bl	inner_kernel_gemm_add_nn_8x2_lib4c
 #endif
 	
 	b		103f
@@ -6138,7 +6128,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NN_8X3_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nn_8x3_lib4c)
+	bl	inner_kernel_gemm_add_nn_8x3_lib4c
 #endif
 	
 	b		103f
@@ -6148,7 +6138,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NN_8X4_LIB4C
 #else
-	CALL(inner_kernel_gemm_add_nn_8x4_lib4c)
+	bl	inner_kernel_gemm_add_nn_8x4_lib4c
 #endif
 
 103:
@@ -6163,7 +6153,7 @@
 #if MACRO_LEVEL>=1
 //	INNER_PREFETCH_4X8_LIB
 #else
-//	CALL(inner_prefetch_4x8_lib)
+//	bl inner_prefetch_4x8_lib
 #endif
 
 
@@ -6180,14 +6170,14 @@
 #if MACRO_LEVEL>=1
 	INNER_TRAN_8X4_LIB
 #else
-	CALL(inner_tran_8x4_lib)
+	bl inner_tran_8x4_lib
 #endif
 
 
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_4X8_VS_LIB
 #else
-	CALL(inner_scale_ab_4x8_vs_lib)
+	bl inner_scale_ab_4x8_vs_lib
 #endif
 
 
@@ -6202,7 +6192,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_4X8_VS_LIB
 #else
-	CALL(inner_store_4x8_vs_lib)
+	bl inner_store_4x8_vs_lib
 #endif
 
 
@@ -6223,8 +6213,7 @@
 // void kernel_strsm_nt_rl_inv_8x4_lib44ccc(int kmax, float *A, int sda, float *B, float *beta, float *C, int ldc, float *D, int ldd, float *E, int lde, float *inv_diag_E)
 
 	.align	4
-	GLOB(kernel_strsm_nt_rl_inv_8x4_lib44ccc)
-	FUN_START(kernel_strsm_nt_rl_inv_8x4_lib44ccc)
+	GLOB_FUN_START(kernel_strsm_nt_rl_inv_8x4_lib44ccc)
 	
 
 
@@ -6246,7 +6235,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_8X4_LIB4
 #else
-	CALL(inner_kernel_gemm_add_nt_8x4_lib4)
+	bl	inner_kernel_gemm_add_nt_8x4_lib4
 #endif
 
 
@@ -6260,7 +6249,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_M1B_8X4_LIB
 #else
-	CALL(inner_scale_m1b_8x4_lib)
+	bl inner_scale_m1b_8x4_lib
 #endif
 
 
@@ -6274,7 +6263,7 @@
 #if MACRO_LEVEL>=1
 	INNER_EDGE_TRSM_RLT_INV_8X4_LIB
 #else
-	CALL(inner_edge_trsm_rlt_inv_8x4_lib)
+	bl inner_edge_trsm_rlt_inv_8x4_lib
 #endif
 
 
@@ -6287,7 +6276,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_8X4_LIB
 #else
-	CALL(inner_store_8x4_lib)
+	bl inner_store_8x4_lib
 #endif
 
 
@@ -6308,8 +6297,7 @@
 // void kernel_strsm_nt_rl_inv_8x4_vs_lib44ccc(int kmax, float *A, int sda, float *B, float *beta, float *C, int ldc, float *D, int ldd, float *E, int lde, float *inv_diag_E, int m1, int n1)
 
 	.align	4
-	GLOB(kernel_strsm_nt_rl_inv_8x4_vs_lib44ccc)
-	FUN_START(kernel_strsm_nt_rl_inv_8x4_vs_lib44ccc)
+	GLOB_FUN_START(kernel_strsm_nt_rl_inv_8x4_vs_lib44ccc)
 	
 
 
@@ -6331,7 +6319,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_8X4_LIB4
 #else
-	CALL(inner_kernel_gemm_add_nt_8x4_lib4)
+	bl	inner_kernel_gemm_add_nt_8x4_lib4
 #endif
 
 
@@ -6347,7 +6335,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_M1B_8X4_VS_LIB
 #else
-	CALL(inner_scale_m1b_8x4_vs_lib)
+	bl inner_scale_m1b_8x4_vs_lib
 #endif
 
 
@@ -6362,7 +6350,7 @@
 #if MACRO_LEVEL>=1
 	INNER_EDGE_TRSM_RLT_INV_8X4_VS_LIB
 #else
-	CALL(inner_edge_trsm_rlt_inv_8x4_vs_lib)
+	bl inner_edge_trsm_rlt_inv_8x4_vs_lib
 #endif
 
 
@@ -6377,7 +6365,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_8X4_VS_LIB
 #else
-	CALL(inner_store_8x4_vs_lib)
+	bl inner_store_8x4_vs_lib
 #endif
 
 
@@ -6398,8 +6386,7 @@
 // void kernel_spotrf_nt_l_8x4_lib44cc(int kmax, float *A, int sda, float *B, float *C, int ldc, float *D, int ldd, float *inv_diag_D)
 
 	.align	4
-	GLOB(kernel_spotrf_nt_l_8x4_lib44cc)
-	FUN_START(kernel_spotrf_nt_l_8x4_lib44cc)
+	GLOB_FUN_START(kernel_spotrf_nt_l_8x4_lib44cc)
 	
 
 
@@ -6421,7 +6408,7 @@
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_GEMM_ADD_NT_8X4_LIB4
 #else
-	CALL(inner_kernel_gemm_add_nt_8x4_lib4)
+	bl	inner_kernel_gemm_add_nt_8x4_lib4
 #endif
 
 
@@ -6434,7 +6421,7 @@
 #if MACRO_LEVEL>=1
 	INNER_SCALE_M11_8X4_LIB
 #else
-	CALL(inner_scale_m11_8x4_lib)
+	bl inner_scale_m11_8x4_lib
 #endif
 
 
@@ -6445,7 +6432,7 @@
 #if MACRO_LEVEL>=1
 	INNER_EDGE_POTRF_8X4_LIB4
 #else
-	CALL(inner_edge_potrf_8x4_lib4)
+	bl inner_edge_potrf_8x4_lib4
 #endif
 
 
@@ -6458,7 +6445,7 @@
 #if MACRO_LEVEL>=1
 	INNER_STORE_L_8X4_LIB
 #else
-	CALL(inner_store_l_8x4_lib)
+	bl inner_store_l_8x4_lib
 #endif
 
 

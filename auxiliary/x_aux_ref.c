@@ -549,7 +549,6 @@ void REF_GESE(int m, int n, REAL alpha, struct MAT *sA, int ai, int aj)
 
 
 // copy and transpose a generic strmat into a generic strmat
-#ifndef HP_CM
 void REF_GETR(int m, int n, struct MAT *sA, int ai, int aj, struct MAT *sB, int bi, int bj)
 	{
 	// invalidate stored inverse diagonal
@@ -583,7 +582,6 @@ void REF_GETR(int m, int n, struct MAT *sA, int ai, int aj, struct MAT *sB, int 
 		}
 	return;
 	}
-#endif
 
 
 
@@ -836,17 +834,6 @@ void REF_VECEX_SP(int m, REAL alpha, int *idx, struct VEC *sx, int xi, struct VE
 	}
 
 
-// z += alpha * x[idx]
-void REF_VECEXAD_SP(int m, REAL alpha, int *idx, struct VEC *sx, int xi, struct VEC *sz, int zi)
-	{
-	REAL *x = sx->pa + xi;
-	REAL *z = sz->pa + zi;
-	int ii;
-	for(ii=0; ii<m; ii++)
-		z[ii] += alpha * x[idx[ii]];
-	return;
-	}
-
 // insert element into strvec
 void REF_VECIN1(REAL alpha, struct VEC *sx, int xi)
 	{
@@ -998,12 +985,11 @@ void REF_VECNRM_INF(int m, struct VEC *sx, int xi, REAL *ptr_norm)
 	REAL tmp;
 	for(ii=0; ii<m; ii++)
 		{
-#if 0 //def USE_C99_MATH // does not propagate NaN !!!
+#ifdef USE_C99_MATH
 		norm = FMAX(norm, FABS(x[ii]));
 #else // no c99
 		tmp = FABS(x[ii]);
-//		norm = tmp>norm ? tmp : norm; // does not propagate NaN !!!
-		norm = norm>=tmp ? norm : tmp;
+		norm = tmp>norm ? tmp : norm;
 #endif
 		}
 	*ptr_norm = norm;
@@ -1657,12 +1643,10 @@ void GESE(int m, int n, REAL alpha, struct MAT *sA, int ai, int aj)
 
 
 
-#ifndef HP_CM
 void GETR(int m, int n, struct MAT *sA, int ai, int aj, struct MAT *sB, int bi, int bj)
 	{
 	REF_GETR(m, n, sA, ai, aj, sB, bi, bj);
 	}
-#endif
 
 
 
@@ -1753,12 +1737,6 @@ void VECIN_SP(int m, REAL alpha, struct VEC *sx, int xi, int *idx, struct VEC *s
 void VECEX_SP(int m, REAL alpha, int *idx, struct VEC *sx, int xi, struct VEC *sz, int zi)
 	{
 	REF_VECEX_SP(m, alpha, idx, sx, xi, sz, zi);
-	}
-
-
-void VECEXAD_SP(int m, REAL alpha, int *idx, struct VEC *sx, int xi, struct VEC *sz, int zi)
-	{
-	REF_VECEXAD_SP(m, alpha, idx, sx, xi, sz, zi);
 	}
 
 

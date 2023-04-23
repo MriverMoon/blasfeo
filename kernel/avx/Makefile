@@ -36,20 +36,14 @@
 include ../../Makefile.rule
 
 
-ifeq ($(TARGET), X64_INTEL_SKYLAKE_X) # TODO remove when not needed !!!
-KERNEL_OBJS = \
-		kernel_dpack_lib4.o \
-
-endif
-
 ifeq ($(TARGET), X64_INTEL_HASWELL)
 KERNEL_OBJS = \
 		kernel_dgemm_diag_lib4.o \
+		kernel_dgemv_4_lib4.o \
 		kernel_dgeqrf_4_lib4.o \
 		kernel_dgecp_lib4.o \
 		kernel_dgetr_lib4.o \
 		kernel_dpack_lib4.o \
-		kernel_dgetr_lib.o \
 		\
 		kernel_sgemm_diag_lib8.o \
 		kernel_sgetr_lib8.o \
@@ -73,14 +67,12 @@ KERNEL_OBJS = \
 		kernel_dgemv_8_lib4.o \
 		kernel_dgemv_4_lib4.o \
 		kernel_dsymv_6_lib4.o \
-		kernel_dger_lib4.o \
 		kernel_dgetrf_pivot_lib4.o \
 		kernel_dgeqrf_4_lib4.o \
 		kernel_dgebp_lib4.o \
 		kernel_dgecp_lib4.o \
 		kernel_dgetr_lib4.o \
 		kernel_dpack_lib4.o \
-		kernel_dgetr_lib.o \
 		\
 		kernel_sgemm_16x4_lib8.o \
 		kernel_sgemm_8x8_lib8.o \
@@ -124,8 +116,6 @@ clean:
 kernel_dgemm_8x4_lib4.o: kernel_dgemm_8x4_lib4.S kernel_dgemm_8x4_lib.S
 kernel_dgemm_4x4_lib4.o: kernel_dgemm_4x4_lib4.S kernel_dgemm_4x4_lib.S
 kernel_dgetrf_pivot_lib4.o: kernel_dgetrf_pivot_lib4.c kernel_dgetrf_pivot_lib.c
-kernel_dgemv_4_lib4.o: kernel_dgemv_4_lib4.S kernel_dgemv_4_lib.S
-kernel_dger_lib4.o: kernel_dger_lib4.S kernel_dger_lib.S
 kernel_sgemm_8x4_lib8.o: kernel_sgemm_8x4_lib8.S kernel_sgemm_8x4_lib.S
 kernel_sgemm_8x8_lib8.o: kernel_sgemm_8x8_lib8.S kernel_sgemm_8x8_lib.S
 kernel_sgemm_16x4_lib8.o: kernel_sgemm_16x4_lib8.S kernel_sgemm_16x4_lib.S

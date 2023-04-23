@@ -74,22 +74,22 @@ void blasfeo_create_dmat(int m, int n, struct blasfeo_dmat *sA, void *memory);
 void blasfeo_create_dvec(int m, struct blasfeo_dvec *sA, void *memory);
 
 // --- packing
-// pack the column-major matrix A (with leading dimension lda) into the matrix struct B (at row and col offsets bi and bj)
+// pack the column-major matrix A into the matrix struct B
 void blasfeo_pack_dmat(int m, int n, double *A, int lda, struct blasfeo_dmat *sB, int bi, int bj);
-// pack the lower-triangular column-major matrix A (with leading dimension lda) into the matrix struct B (at row and col offsets bi and bj)
+// pack the lower-triangular column-major matrix A into the matrix struct B
 void blasfeo_pack_l_dmat(int m, int n, double *A, int lda, struct blasfeo_dmat *sB, int bi, int bj);
-// pack the upper-triangular column-major matrix A (with leading dimension lda) into the matrix struct B (at row and col offsets bi and bj)
+// pack the upper-triangular column-major matrix A into the matrix struct B
 void blasfeo_pack_u_dmat(int m, int n, double *A, int lda, struct blasfeo_dmat *sB, int bi, int bj);
-// transpose and pack the column-major matrix A (with leading dimension lda) into the matrix struct B (at row and col offsets bi and bj)
+// transpose and pack the column-major matrix A into the matrix struct B
 void blasfeo_pack_tran_dmat(int m, int n, double *A, int lda, struct blasfeo_dmat *sB, int bi, int bj);
-// pack the vector x (using increment incx) into the vector structure y (at offset yi)
-void blasfeo_pack_dvec(int m, double *x, int incx, struct blasfeo_dvec *sy, int yi);
-// unpack the matrix structure A (at row and col offsets ai and aj) into the column-major matrix B (with leading dimension ldb)
+// pack the vector x into the vector structure y
+void blasfeo_pack_dvec(int m, double *x, int xi, struct blasfeo_dvec *sy, int yi);
+// unpack the matrix structure A into the column-major matrix B
 void blasfeo_unpack_dmat(int m, int n, struct blasfeo_dmat *sA, int ai, int aj, double *B, int ldb);
-// transpose and unpack the matrix structure A (at row and col offsets ai and aj) into the column-major matrix B (with leading dimension ldb)
+// transpose and unpack the matrix structure A into the column-major matrix B
 void blasfeo_unpack_tran_dmat(int m, int n, struct blasfeo_dmat *sA, int ai, int aj, double *B, int ldb);
-// unpack the vector structure x (at offset xi) into the vector y (using increment incy)
-void blasfeo_unpack_dvec(int m, struct blasfeo_dvec *sx, int xi, double *y, int incy);
+// pack the vector structure x into the vector y
+void blasfeo_unpack_dvec(int m, struct blasfeo_dvec *sx, int xi, double *y,  int yi);
 
 // --- cast
 //
@@ -185,14 +185,9 @@ void blasfeo_dveccp(int m, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec 
 void blasfeo_dvecsc(int m, double alpha, struct blasfeo_dvec *sx, int xi);
 // y <= alpha*x
 void blasfeo_dveccpsc(int m, double alpha, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sy, int yi);
-// z[idx] += alpha * x
 void blasfeo_dvecad_sp(int m, double alpha, struct blasfeo_dvec *sx, int xi, int *idx, struct blasfeo_dvec *sz, int zi);
-// z[idx] <= alpha * x
 void blasfeo_dvecin_sp(int m, double alpha, struct blasfeo_dvec *sx, int xi, int *idx, struct blasfeo_dvec *sz, int zi);
-// z <= alpha * x[idx]
-void blasfeo_dvecex_sp(int m, double alpha, int *idx, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi);
-// z += alpha * x[idx]
-void blasfeo_dvecexad_sp(int m, double alpha, int *idx, struct blasfeo_dvec *sx, int xi, struct blasfeo_dvec *sz, int zi);
+void blasfeo_dvecex_sp(int m, double alpha, int *idx, struct blasfeo_dvec *sx, int x, struct blasfeo_dvec *sz, int zi);
 
 void blasfeo_dveccl(int m,
 	struct blasfeo_dvec *sxm, int xim, struct blasfeo_dvec *sx, int xi,
@@ -234,17 +229,6 @@ void blasfeo_pm_print_dmat(int m, int n, struct blasfeo_pm_dmat *sA, int ai, int
 size_t blasfeo_cm_memsize_dmat(int m, int n);
 // create a strmat for a matrix of size m*n by using memory passed by a pointer (pointer is not updated)
 void blasfeo_cm_create_dmat(int m, int n, struct blasfeo_pm_dmat *sA, void *memory);
-
-
-
-//
-// BLAS API helper functions
-//
-
-#if ( defined(BLAS_API) & defined(MF_PANELMAJ) )
-// aux
-void blasfeo_cm_dgetr(int m, int n, struct blasfeo_cm_dmat *sA, int ai, int aj, struct blasfeo_cm_dmat *sB, int bi, int bj);
-#endif
 
 
 

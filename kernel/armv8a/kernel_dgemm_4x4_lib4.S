@@ -35,11 +35,9 @@
 
 
 
-#if defined(OS_LINUX)
-
 #define STACKSIZE 11*16
 #define PROLOGUE \
-	sub sp, sp, #(11 * 16); \
+	add sp, sp, #-(11 * 16); \
 	stp d8, d9, [sp, #(0 * 16)]; \
 	stp d10, d11, [sp, #(1 * 16)]; \
 	stp d12, d13, [sp, #(2 * 16)]; \
@@ -64,15 +62,15 @@
 	ldp x28, x29, [sp, #(9 * 16)]; \
 	ldr x30, [sp, #(10 * 16)]; \
 	add sp, sp, #(11 * 16);
-#define GLOB(NAME) \
-	.global	NAME
+#define GLOB_FUN_START(NAME) \
+	.global	NAME; \
+	.type NAME, %function; \
+NAME:
 #define FUN_START(NAME) \
 	.type NAME, %function; \
 NAME:
 #define FUN_END(NAME) \
 	.size	NAME, .-NAME
-#define CALL(NAME) \
-	bl NAME
 #define ZERO_ACC \
 	fmov	d0, xzr; \
 	fmov    d1, d0; \
@@ -82,57 +80,6 @@ NAME:
 	fmov    d5, d0; \
 	fmov    d6, d0; \
 	fmov    d7, d0
-
-#else // defined(OS_MAC)
-
-#define STACKSIZE 11*16
-.macro PROLOGUE
-	sub sp, sp, #(11 * 16)
-	stp d8, d9, [sp, #(0 * 16)]
-	stp d10, d11, [sp, #(1 * 16)]
-	stp d12, d13, [sp, #(2 * 16)]
-	stp d14, d15, [sp, #(3 * 16)]
-	stp x18, x19, [sp, #(4 * 16)]
-	stp x20, x21, [sp, #(5 * 16)]
-	stp x22, x23, [sp, #(6 * 16)]
-	stp x24, x25, [sp, #(7 * 16)]
-	stp x26, x27, [sp, #(8 * 16)]
-	stp x28, x29, [sp, #(9 * 16)]
-	str x30, [sp, #(10 * 16)]
-.endm
-.macro EPILOGUE
-	ldp d8, d9, [sp, #(0 * 16)]
-	ldp d10, d11, [sp, #(1 * 16)]
-	ldp d12, d13, [sp, #(2 * 16)]
-	ldp d14, d15, [sp, #(3 * 16)]
-	ldp x18, x19, [sp, #(4 * 16)]
-	ldp x20, x21, [sp, #(5 * 16)]
-	ldp x22, x23, [sp, #(6 * 16)]
-	ldp x24, x25, [sp, #(7 * 16)]
-	ldp x26, x27, [sp, #(8 * 16)]
-	ldp x28, x29, [sp, #(9 * 16)]
-	ldr x30, [sp, #(10 * 16)]
-	add sp, sp, #(11 * 16)
-.endm
-#define GLOB(NAME) \
-	.globl _ ## NAME
-#define FUN_START(NAME) \
-_ ## NAME:
-#define FUN_END(NAME)
-#define CALL(NAME) \
-	bl _ ## NAME
-.macro ZERO_ACC
-	fmov	d0, xzr
-	fmov    d1, d0
-	fmov    d2, d0
-	fmov    d3, d0
-	fmov    d4, d0
-	fmov    d5, d0
-	fmov    d6, d0
-	fmov    d7, d0
-.endm
-
-#endif
 
 
 
@@ -154,10 +101,10 @@ _ ## NAME:
 // output arguments:
 
 #if MACRO_LEVEL>=2
-	.macro INNER_KERNEL_GEMM_NT_4X4_LIB4
+	.macro INNER_KERNEL_GEMM_ADD_NT_4X4_LIB4
 #else
 	.align	4
-	FUN_START(inner_kernel_gemm_nt_4x4_lib4)
+	FUN_START(inner_kernel_gemm_add_nt_4x4_lib4)
 #endif
 
 
@@ -648,7 +595,7 @@ _ ## NAME:
 #else
 	ret
 
-	FUN_END(inner_kernel_gemm_nt_4x4_lib4)
+	FUN_END(inner_kernel_gemm_add_nt_4x4_lib4)
 #endif
 
 
@@ -666,10 +613,10 @@ _ ## NAME:
 // output arguments:
 
 #if MACRO_LEVEL>=2
-	.macro INNER_KERNEL_GEMM_NN_4X4_LIB4
+	.macro INNER_KERNEL_GEMM_ADD_NN_4X4_LIB4
 #else
 	.align	4
-	FUN_START(inner_kernel_gemm_nn_4x4_lib4)
+	FUN_START(inner_kernel_gemm_add_nn_4x4_lib4)
 #endif
 
 
@@ -1414,7 +1361,7 @@ _ ## NAME:
 #else
 	ret
 
-	FUN_END(inner_kernel_gemm_nn_4x4_lib4)
+	FUN_END(inner_kernel_gemm_add_nn_4x4_lib4)
 #endif
 
 
@@ -1943,10 +1890,10 @@ _ ## NAME:
 // w12   <- offsetB
 
 #if MACRO_LEVEL>=1
-	.macro INNER_EDGE_GEMM_NN_4X4_LIB4
+	.macro INNER_EDGE_GEMM_ADD_NN_4X4_LIB4
 #else
 	.align	4
-	FUN_START(inner_edge_gemm_nn_4x4_lib4)
+	FUN_START(inner_edge_gemm_add_nn_4x4_lib4)
 #endif
 
 	cmp		w12, #0
@@ -2002,396 +1949,9 @@ _ ## NAME:
 #else
 	ret
 
-	FUN_END(inner_edge_gemm_nn_4x4_lib4)
+	FUN_END(inner_edge_gemm_add_nn_4x4_lib4)
 #endif
 	
-
-
-
-
-// subroutine
-//
-// triangular multiplication:
-// side = right
-// uplo = lower
-// tran = transposed
-// not-unit diagonal
-//
-// input arguments:
-// w8   <- k
-// x9   <- A
-// x10   <- B
-//
-// output arguments:
-
-#if MACRO_LEVEL>=1
-	.macro INNER_EDGE_TRMM_NT_RL_4X4_LIB4
-#else
-	.align 4
-	FUN_START(inner_edge_trmm_nt_rl_4x4_lib4)
-#endif
-
-	ldp		q24, q25, [x9, #(0*8+0*32)] // A
-	ldp		q26, q27, [x10, #(0*8+0*32)] // B
-	fmla	v0.2d, v24.2d, v26.d[0]
-	fmla	v1.2d, v25.2d, v26.d[0]
-	fmla	v2.2d, v24.2d, v26.d[1]
-	fmla	v3.2d, v25.2d, v26.d[1]
-	fmla	v4.2d, v24.2d, v27.d[0]
-	fmla	v5.2d, v25.2d, v27.d[0]
-	fmla	v6.2d, v24.2d, v27.d[1]
-	fmla	v7.2d, v25.2d, v27.d[1]
-
-	ldp		q24, q25, [x9, #(0*8+1*32)] // A
-	ldr		d26, [x10, #(1*8+1*32)] // B
-	ldr		q27, [x10, #(2*8+1*32)] // B
-	fmla	v2.2d, v24.2d, v26.d[0]
-	fmla	v3.2d, v25.2d, v26.d[0]
-	fmla	v4.2d, v24.2d, v27.d[0]
-	fmla	v5.2d, v25.2d, v27.d[0]
-	fmla	v6.2d, v24.2d, v27.d[1]
-	fmla	v7.2d, v25.2d, v27.d[1]
-
-	ldp		q24, q25, [x9, #(0*8+2*32)] // A
-	ldr		q27, [x10, #(2*8+2*32)] // B
-	fmla	v4.2d, v24.2d, v27.d[0]
-	fmla	v5.2d, v25.2d, v27.d[0]
-	fmla	v6.2d, v24.2d, v27.d[1]
-	fmla	v7.2d, v25.2d, v27.d[1]
-
-	ldp		q24, q25, [x9, #(0*8+3*32)] // A
-	ldr		d27, [x10, #(3*8+3*32)] // B
-	fmla	v6.2d, v24.2d, v27.d[0]
-	fmla	v7.2d, v25.2d, v27.d[0]
-
-	sub		w8, w8, #4
-	add		x9, x9, #128
-	add		x10, x10, #128
-
-#if MACRO_LEVEL>=1
-	.endm
-#else
-	ret
-
-	FUN_END(inner_edge_trmm_nt_rl_4x4_lib4)
-#endif
-
-
-
-
-
-// subroutine
-//
-// triangular multiplication:
-// side = right
-// uplo = lower
-// tran = transposed
-// not-unit diagonal
-//
-// input arguments:
-// w8   <- k
-// x9   <- A
-// x10  <- B
-// w11  <- n1
-//
-// output arguments:
-
-#if MACRO_LEVEL>=1
-	.macro INNER_EDGE_TRMM_NT_RL_4X4_VS_LIB4
-#else
-	.align 4
-	FUN_START(inner_edge_trmm_nt_rl_4x4_vs_lib4)
-#endif
-
-	cmp		w11, #0
-	ble		0f
-
-	cmp		w11, #4
-	blt		1f
-
-	ldp		q24, q25, [x9, #(0*8+0*32)] // A
-	ldp		q26, q27, [x10, #(0*8+0*32)] // B
-	fmla	v0.2d, v24.2d, v26.d[0]
-	fmla	v1.2d, v25.2d, v26.d[0]
-	fmla	v2.2d, v24.2d, v26.d[1]
-	fmla	v3.2d, v25.2d, v26.d[1]
-	fmla	v4.2d, v24.2d, v27.d[0]
-	fmla	v5.2d, v25.2d, v27.d[0]
-	fmla	v6.2d, v24.2d, v27.d[1]
-	fmla	v7.2d, v25.2d, v27.d[1]
-
-	ldp		q24, q25, [x9, #(0*8+1*32)] // A
-	ldr		d26, [x10, #(1*8+1*32)] // B
-	ldr		q27, [x10, #(2*8+1*32)] // B
-	fmla	v2.2d, v24.2d, v26.d[0]
-	fmla	v3.2d, v25.2d, v26.d[0]
-	fmla	v4.2d, v24.2d, v27.d[0]
-	fmla	v5.2d, v25.2d, v27.d[0]
-	fmla	v6.2d, v24.2d, v27.d[1]
-	fmla	v7.2d, v25.2d, v27.d[1]
-
-	ldp		q24, q25, [x9, #(0*8+2*32)] // A
-	ldr		q27, [x10, #(2*8+2*32)] // B
-	fmla	v4.2d, v24.2d, v27.d[0]
-	fmla	v5.2d, v25.2d, v27.d[0]
-	fmla	v6.2d, v24.2d, v27.d[1]
-	fmla	v7.2d, v25.2d, v27.d[1]
-
-	ldp		q24, q25, [x9, #(0*8+3*32)] // A
-	ldr		d27, [x10, #(3*8+3*32)] // B
-	fmla	v6.2d, v24.2d, v27.d[0]
-	fmla	v7.2d, v25.2d, v27.d[0]
-
-	sub		w8, w8, #4
-	add		x9, x9, #128
-	add		x10, x10, #128
-
-	b		0f
-
-1:
-
-	cmp		w11, #3
-	blt		1f
-
-	ldp		q24, q25, [x9, #(0*8+0*32)] // A
-	ldr		q26, [x10, #(0*8+0*32)] // B
-	ldr		d27, [x10, #(2*8+0*32)] // B
-	fmla	v0.2d, v24.2d, v26.d[0]
-	fmla	v1.2d, v25.2d, v26.d[0]
-	fmla	v2.2d, v24.2d, v26.d[1]
-	fmla	v3.2d, v25.2d, v26.d[1]
-	fmla	v4.2d, v24.2d, v27.d[0]
-	fmla	v5.2d, v25.2d, v27.d[0]
-
-	ldp		q24, q25, [x9, #(0*8+1*32)] // A
-	ldr		d26, [x10, #(1*8+1*32)] // B
-	ldr		d27, [x10, #(2*8+1*32)] // B
-	fmla	v2.2d, v24.2d, v26.d[0]
-	fmla	v3.2d, v25.2d, v26.d[0]
-	fmla	v4.2d, v24.2d, v27.d[0]
-	fmla	v5.2d, v25.2d, v27.d[0]
-
-	ldp		q24, q25, [x9, #(0*8+2*32)] // A
-	ldr		d27, [x10, #(2*8+2*32)] // B
-	fmla	v4.2d, v24.2d, v27.d[0]
-	fmla	v5.2d, v25.2d, v27.d[0]
-
-	sub		w8, w8, #3
-	add		x9, x9, #96
-	add		x10, x10, #96
-
-	b		0f
-
-1:
-
-	cmp		w11, #2
-	blt		1f
-
-	ldp		q24, q25, [x9, #(0*8+0*32)] // A
-	ldr		q26, [x10, #(0*8+0*32)] // B
-	fmla	v0.2d, v24.2d, v26.d[0]
-	fmla	v1.2d, v25.2d, v26.d[0]
-	fmla	v2.2d, v24.2d, v26.d[1]
-	fmla	v3.2d, v25.2d, v26.d[1]
-
-	ldp		q24, q25, [x9, #(0*8+1*32)] // A
-	ldr		d26, [x10, #(1*8+1*32)] // B
-	fmla	v2.2d, v24.2d, v26.d[0]
-	fmla	v3.2d, v25.2d, v26.d[0]
-
-	sub		w8, w8, #2
-	add		x9, x9, #64
-	add		x10, x10, #64
-
-	b		0f
-
-1:
-
-//	cmp		w11, #1
-//	blt		0f
-
-	ldp		q24, q25, [x9, #(0*8+0*32)] // A
-	ldr		d26, [x10, #(0*8+0*32)] // B
-	fmla	v0.2d, v24.2d, v26.d[0]
-	fmla	v1.2d, v25.2d, v26.d[0]
-
-	sub		w8, w8, #2
-	add		x9, x9, #32
-	add		x10, x10, #32
-
-	b		0f
-
-0:
-
-#if MACRO_LEVEL>=1
-	.endm
-#else
-	ret
-
-	FUN_END(inner_edge_trmm_nt_rl_4x4_vs_lib4)
-#endif
-
-
-
-
-
-// subroutine
-//
-// triangular multiplication:
-// side = right
-// uplo = upper
-// tran = transposed
-// not-unit diagonal
-//
-// input arguments:
-// w8   <- k
-// x9   <- A
-// x10   <- B
-//
-// output arguments:
-
-#if MACRO_LEVEL>=1
-	.macro INNER_EDGE_TRMM_NT_RU_4X4_LIB4
-#else
-	.align 4
-	FUN_START(inner_edge_trmm_nt_ru_4x4_lib4)
-#endif
-
-	ldp		q24, q25, [x9, #(0*8+0*32)] // A
-	ldr		d26, [x10, #(0*8+0*32)] // B
-	fmla	v0.2d, v24.2d, v26.d[0]
-	fmla	v1.2d, v25.2d, v26.d[0]
-
-	ldp		q24, q25, [x9, #(0*8+1*32)] // A
-	ldr		q26, [x10, #(0*8+1*32)] // B
-	fmla	v0.2d, v24.2d, v26.d[0]
-	fmla	v1.2d, v25.2d, v26.d[0]
-	fmla	v2.2d, v24.2d, v26.d[1]
-	fmla	v3.2d, v25.2d, v26.d[1]
-
-	ldp		q24, q25, [x9, #(0*8+2*32)] // A
-	ldr		q26, [x10, #(0*8+2*32)] // B
-	ldr		d27, [x10, #(2*8+2*32)] // B
-	fmla	v0.2d, v24.2d, v26.d[0]
-	fmla	v1.2d, v25.2d, v26.d[0]
-	fmla	v2.2d, v24.2d, v26.d[1]
-	fmla	v3.2d, v25.2d, v26.d[1]
-	fmla	v4.2d, v24.2d, v27.d[0]
-	fmla	v5.2d, v25.2d, v27.d[0]
-
-	ldp		q24, q25, [x9, #(0*8+3*32)] // A
-	ldp		q26, q27, [x10, #(0*8+3*32)] // B
-	fmla	v0.2d, v24.2d, v26.d[0]
-	fmla	v1.2d, v25.2d, v26.d[0]
-	fmla	v2.2d, v24.2d, v26.d[1]
-	fmla	v3.2d, v25.2d, v26.d[1]
-	fmla	v4.2d, v24.2d, v27.d[0]
-	fmla	v5.2d, v25.2d, v27.d[0]
-	fmla	v6.2d, v24.2d, v27.d[1]
-	fmla	v7.2d, v25.2d, v27.d[1]
-
-	sub		w8, w8, #4
-	add		x9, x9, #128
-	add		x10, x10, #128
-
-#if MACRO_LEVEL>=1
-	.endm
-#else
-	ret
-
-	FUN_END(inner_edge_trmm_nt_ru_4x4_lib4)
-#endif
-
-
-
-
-
-// subroutine
-//
-// triangular multiplication:
-// side = right
-// uplo = upper
-// tran = transposed
-// not-unit diagonal
-//
-// input arguments:
-// w8   <- k
-// x9   <- A
-// x10   <- B
-//
-// output arguments:
-
-#if MACRO_LEVEL>=1
-	.macro INNER_EDGE_TRMM_NT_RU_4X4_VS_LIB4
-#else
-	.align 4
-	FUN_START(inner_edge_trmm_nt_ru_4x4_vs_lib4)
-#endif
-
-	ldp		q24, q25, [x9, #(0*8+0*32)] // A
-	ldr		d26, [x10, #(0*8+0*32)] // B
-	fmla	v0.2d, v24.2d, v26.d[0]
-	fmla	v1.2d, v25.2d, v26.d[0]
-	sub		w8, w8, #1
-	add		x9, x9, #32
-	add		x10, x10, #32
-
-	cmp		w8, #0
-	ble		0f
-
-	ldp		q24, q25, [x9, #(0*8+0*32)] // A
-	ldr		q26, [x10, #(0*8+0*32)] // B
-	fmla	v0.2d, v24.2d, v26.d[0]
-	fmla	v1.2d, v25.2d, v26.d[0]
-	fmla	v2.2d, v24.2d, v26.d[1]
-	fmla	v3.2d, v25.2d, v26.d[1]
-	sub		w8, w8, #1
-	add		x9, x9, #32
-	add		x10, x10, #32
-
-	cmp		w8, #0
-	ble		0f
-
-	ldp		q24, q25, [x9, #(0*8+0*32)] // A
-	ldr		q26, [x10, #(0*8+0*32)] // B
-	ldr		d27, [x10, #(2*8+0*32)] // B
-	fmla	v0.2d, v24.2d, v26.d[0]
-	fmla	v1.2d, v25.2d, v26.d[0]
-	fmla	v2.2d, v24.2d, v26.d[1]
-	fmla	v3.2d, v25.2d, v26.d[1]
-	fmla	v4.2d, v24.2d, v27.d[0]
-	fmla	v5.2d, v25.2d, v27.d[0]
-	sub		w8, w8, #1
-	add		x9, x9, #32
-	add		x10, x10, #32
-
-	cmp		w8, #0
-	ble		0f
-
-	ldp		q24, q25, [x9, #(0*8+0*32)] // A
-	ldp		q26, q27, [x10, #(0*8+0*32)] // B
-	fmla	v0.2d, v24.2d, v26.d[0]
-	fmla	v1.2d, v25.2d, v26.d[0]
-	fmla	v2.2d, v24.2d, v26.d[1]
-	fmla	v3.2d, v25.2d, v26.d[1]
-	fmla	v4.2d, v24.2d, v27.d[0]
-	fmla	v5.2d, v25.2d, v27.d[0]
-	fmla	v6.2d, v24.2d, v27.d[1]
-	fmla	v7.2d, v25.2d, v27.d[1]
-	sub		w8, w8, #1
-	add		x9, x9, #32
-	add		x10, x10, #32
-
-0:
-
-#if MACRO_LEVEL>=1
-	.endm
-#else
-	ret
-
-	FUN_END(inner_edge_trmm_nt_ru_4x4_vs_lib4)
-#endif
-
 
 
 
@@ -2719,159 +2279,6 @@ _ ## NAME:
 	ret
 
 	FUN_END(inner_edge_trsm_rlt_one_4x4_vs_lib4)
-#endif
-
-
-
-
-
-// subroutine
-//
-// triangular substitution:
-// side = right
-// uplo = upper
-// tran = transposed
-// requires explicit inverse of diagonal
-//
-// input arguments:
-// x8   <- E
-// x9   <- inv_diag_E
-//
-// output arguments:
-// x8   <- E
-// x9   <- inv_diag_E
-
-#if MACRO_LEVEL>=1
-	.macro INNER_EDGE_TRSM_RUT_INV_4X4_LIB4
-#else
-	.align 4
-	FUN_START(inner_edge_trsm_rut_inv_4x4_lib4)
-#endif
-	
-	ldr			d16, [x9, #24] // E_inv[3]
-	fmul		v6.2d, v6.2d, v16.d[0]
-	fmul		v7.2d, v7.2d, v16.d[0]
-	ldr			d16, [x8, #112] // E[2+4*3]
-	fmls		v4.2d, v6.2d, v16.d[0]
-	fmls		v5.2d, v7.2d, v16.d[0]
-	ldr			d16, [x8, #104] // E[1+4*3]
-	fmls		v2.2d, v6.2d, v16.d[0]
-	fmls		v3.2d, v7.2d, v16.d[0]
-	ldr			d16, [x8, #96] // E[0+4*3]
-	fmls		v0.2d, v6.2d, v16.d[0]
-	fmls		v1.2d, v7.2d, v16.d[0]
-
-	ldr			d16, [x9, #16] // E_inv[2]
-	fmul		v4.2d, v4.2d, v16.d[0]
-	fmul		v5.2d, v5.2d, v16.d[0]
-	ldr			d16, [x8, #72] // E[1+4*2]
-	fmls		v2.2d, v4.2d, v16.d[0]
-	fmls		v3.2d, v5.2d, v16.d[0]
-	ldr			d16, [x8, #64] // E[0+4*2]
-	fmls		v0.2d, v4.2d, v16.d[0]
-	fmls		v1.2d, v5.2d, v16.d[0]
-
-	ldr			d16, [x9, #8] // E_inv[1]
-	fmul		v2.2d, v2.2d, v16.d[0]
-	fmul		v3.2d, v3.2d, v16.d[0]
-	ldr			d16, [x8, #32] // E[0+4*1]
-	fmls		v0.2d, v2.2d, v16.d[0]
-	fmls		v1.2d, v3.2d, v16.d[0]
-
-	ldr			d16, [x9, #0] // E_inv[0]
-	fmul		v0.2d, v0.2d, v16.d[0]
-	fmul		v1.2d, v1.2d, v16.d[0]
-
-#if MACRO_LEVEL>=1
-	.endm
-#else
-	ret
-
-	FUN_END(inner_edge_trsm_rut_inv_4x4_lib4)
-#endif
-
-
-
-
-
-// subroutine
-//
-// triangular substitution:
-// side = right
-// uplo = upper
-// tran = transposed
-// requires explicit inverse of diagonal
-//
-// input arguments:
-// x8   <- E
-// x9   <- inv_diag_E
-// w10  <- n1
-//
-// output arguments:
-// x8   <- E
-// x9   <- inv_diag_E
-// w10  <- n1
-
-#if MACRO_LEVEL>=1
-	.macro INNER_EDGE_TRSM_RUT_INV_4X4_VS_LIB4
-#else
-	.align 4
-	FUN_START(inner_edge_trsm_rut_inv_4x4_vs_lib4)
-#endif
-	
-	cmp		w10, #3
-	ble		1f
-
-	ldr			d16, [x9, #24] // E_inv[3]
-	fmul		v6.2d, v6.2d, v16.d[0]
-	fmul		v7.2d, v7.2d, v16.d[0]
-	ldr			d16, [x8, #112] // E[2+4*3]
-	fmls		v4.2d, v6.2d, v16.d[0]
-	fmls		v5.2d, v7.2d, v16.d[0]
-	ldr			d16, [x8, #104] // E[1+4*3]
-	fmls		v2.2d, v6.2d, v16.d[0]
-	fmls		v3.2d, v7.2d, v16.d[0]
-	ldr			d16, [x8, #96] // E[0+4*3]
-	fmls		v0.2d, v6.2d, v16.d[0]
-	fmls		v1.2d, v7.2d, v16.d[0]
-
-1:
-	cmp		w10, #2
-	ble		1f
-
-	ldr			d16, [x9, #16] // E_inv[2]
-	fmul		v4.2d, v4.2d, v16.d[0]
-	fmul		v5.2d, v5.2d, v16.d[0]
-	ldr			d16, [x8, #72] // E[1+4*2]
-	fmls		v2.2d, v4.2d, v16.d[0]
-	fmls		v3.2d, v5.2d, v16.d[0]
-	ldr			d16, [x8, #64] // E[0+4*2]
-	fmls		v0.2d, v4.2d, v16.d[0]
-	fmls		v1.2d, v5.2d, v16.d[0]
-
-1:
-	cmp		w10, #1
-	ble		1f
-
-	ldr			d16, [x9, #8] // E_inv[1]
-	fmul		v2.2d, v2.2d, v16.d[0]
-	fmul		v3.2d, v3.2d, v16.d[0]
-	ldr			d16, [x8, #32] // E[0+4*1]
-	fmls		v0.2d, v2.2d, v16.d[0]
-	fmls		v1.2d, v3.2d, v16.d[0]
-
-1:
-
-	ldr			d16, [x9, #0] // E_inv[0]
-	fmul		v0.2d, v0.2d, v16.d[0]
-	fmul		v1.2d, v1.2d, v16.d[0]
-
-#if MACRO_LEVEL>=1
-	.endm
-#else
-	ret
-
-	FUN_END(inner_edge_trsm_rut_inv_4x4_vs_lib4)
 #endif
 
 
@@ -3588,8 +2995,7 @@ _ ## NAME:
 // void kernel_dgemm_nt_4x4_lib4(int kmax, double *alpha, double *A, double *B, double *beta, double *C, double *D)
 
 	.align	4
-	GLOB(kernel_dgemm_nt_4x4_lib4)
-	FUN_START(kernel_dgemm_nt_4x4_lib4)
+	GLOB_FUN_START(kernel_dgemm_nt_4x4_lib4)
 	
 
 
@@ -3607,9 +3013,9 @@ _ ## NAME:
 	mov		x10, x3 // B
 
 #if MACRO_LEVEL>=2
-	INNER_KERNEL_GEMM_NT_4X4_LIB4
+	INNER_KERNEL_GEMM_ADD_NT_4X4_LIB4
 #else
-	CALL(inner_kernel_gemm_nt_4x4_lib4)
+	bl	inner_kernel_gemm_add_nt_4x4_lib4
 #endif
 
 
@@ -3622,7 +3028,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_4X4_LIB4
 #else
-	CALL(inner_scale_ab_4x4_lib4)
+	bl inner_scale_ab_4x4_lib4
 #endif
 
 
@@ -3633,7 +3039,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_STORE_4X4_LIB4
 #else
-	CALL(inner_store_4x4_lib4)
+	bl inner_store_4x4_lib4
 #endif
 
 
@@ -3654,8 +3060,7 @@ _ ## NAME:
 // void kernel_dgemm_nt_4x4_vs_lib4(int kmax, double *alpha, double *A, double *B, double *beta, double *C, double *D, int m1, int n1)
 
 	.align	4
-	GLOB(kernel_dgemm_nt_4x4_vs_lib4)
-	FUN_START(kernel_dgemm_nt_4x4_vs_lib4)
+	GLOB_FUN_START(kernel_dgemm_nt_4x4_vs_lib4)
 	
 
 
@@ -3673,9 +3078,9 @@ _ ## NAME:
 	mov		x10, x3 // B
 
 #if MACRO_LEVEL>=2
-	INNER_KERNEL_GEMM_NT_4X4_LIB4
+	INNER_KERNEL_GEMM_ADD_NT_4X4_LIB4
 #else
-	CALL(inner_kernel_gemm_nt_4x4_lib4)
+	bl	inner_kernel_gemm_add_nt_4x4_lib4
 #endif
 
 
@@ -3688,7 +3093,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_4X4_LIB4
 #else
-	CALL(inner_scale_ab_4x4_lib4)
+	bl inner_scale_ab_4x4_lib4
 #endif
 
 
@@ -3701,7 +3106,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_STORE_4X4_VS_LIB4
 #else
-	CALL(inner_store_4x4_vs_lib4)
+	bl inner_store_4x4_vs_lib4
 #endif
 
 
@@ -3722,8 +3127,7 @@ _ ## NAME:
 // void kernel_dgemm_nn_4x4_lib4(int kmax, double *alpha, double *A, int offsetB, double *B, int sdb, double *beta, double *C, double *D)
 
 	.align	4
-	GLOB(kernel_dgemm_nn_4x4_lib4)
-	FUN_START(kernel_dgemm_nn_4x4_lib4)
+	GLOB_FUN_START(kernel_dgemm_nn_4x4_lib4)
 	
 
 
@@ -3744,15 +3148,15 @@ _ ## NAME:
 	mov		w12, w3 // offsetB
 
 #if MACRO_LEVEL>=1
-	INNER_EDGE_GEMM_NN_4X4_LIB4
+	INNER_EDGE_GEMM_ADD_NN_4X4_LIB4
 #else
-	CALL(inner_edge_gemm_nn_4x4_lib4)
+	bl	inner_edge_gemm_add_nn_4x4_lib4
 #endif
 
 #if MACRO_LEVEL>=2
-	INNER_KERNEL_GEMM_NN_4X4_LIB4
+	INNER_KERNEL_GEMM_ADD_NN_4X4_LIB4
 #else
-	CALL(inner_kernel_gemm_nn_4x4_lib4)
+	bl	inner_kernel_gemm_add_nn_4x4_lib4
 #endif
 
 
@@ -3765,7 +3169,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_4X4_LIB4
 #else
-	CALL(inner_scale_ab_4x4_lib4)
+	bl inner_scale_ab_4x4_lib4
 #endif
 
 
@@ -3776,7 +3180,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_STORE_4X4_LIB4
 #else
-	CALL(inner_store_4x4_lib4)
+	bl inner_store_4x4_lib4
 #endif
 
 
@@ -3797,8 +3201,7 @@ _ ## NAME:
 // void kernel_dgemm_nn_4x4_vs_lib4(int kmax, double *alpha, double *A, int offsetB, double *B, int sdb, double *beta, double *C, double *D, int m1, int n1)
 
 	.align	4
-	GLOB(kernel_dgemm_nn_4x4_vs_lib4)
-	FUN_START(kernel_dgemm_nn_4x4_vs_lib4)
+	GLOB_FUN_START(kernel_dgemm_nn_4x4_vs_lib4)
 	
 
 
@@ -3821,15 +3224,15 @@ _ ## NAME:
 // TODO offsetB
 
 #if MACRO_LEVEL>=1
-	INNER_EDGE_GEMM_NN_4X4_LIB4
+	INNER_EDGE_GEMM_ADD_NN_4X4_LIB4
 #else
-	CALL(inner_edge_gemm_nn_4x4_lib4)
+	bl	inner_edge_gemm_add_nn_4x4_lib4
 #endif
 
 #if MACRO_LEVEL>=2
-	INNER_KERNEL_GEMM_NN_4X4_LIB4
+	INNER_KERNEL_GEMM_ADD_NN_4X4_LIB4
 #else
-	CALL(inner_kernel_gemm_nn_4x4_lib4)
+	bl	inner_kernel_gemm_add_nn_4x4_lib4
 #endif
 
 
@@ -3842,7 +3245,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_4X4_LIB4
 #else
-	CALL(inner_scale_ab_4x4_lib4)
+	bl inner_scale_ab_4x4_lib4
 #endif
 
 
@@ -3855,7 +3258,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_STORE_4X4_VS_LIB4
 #else
-	CALL(inner_store_4x4_vs_lib4)
+	bl inner_store_4x4_vs_lib4
 #endif
 
 
@@ -3876,8 +3279,7 @@ _ ## NAME:
 // void kernel_dsyrk_nt_l_4x4_lib4(int kmax, double *alpha, double *A, double *B, double *beta, double *C, double *D)
 
 	.align	4
-	GLOB(kernel_dsyrk_nt_l_4x4_lib4)
-	FUN_START(kernel_dsyrk_nt_l_4x4_lib4)
+	GLOB_FUN_START(kernel_dsyrk_nt_l_4x4_lib4)
 	
 
 
@@ -3897,7 +3299,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_SYRK_L_ADD_NT_4X4_LIB4
 #else
-	CALL(inner_kernel_syrk_l_add_nt_4x4_lib4)
+	bl	inner_kernel_syrk_l_add_nt_4x4_lib4
 #endif
 
 
@@ -3910,7 +3312,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_4X4_LIB4
 #else
-	CALL(inner_scale_ab_4x4_lib4)
+	bl inner_scale_ab_4x4_lib4
 #endif
 
 
@@ -3921,7 +3323,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_STORE_L_4X4_LIB4
 #else
-	CALL(inner_store_l_4x4_lib4)
+	bl inner_store_l_4x4_lib4
 #endif
 
 
@@ -3942,8 +3344,7 @@ _ ## NAME:
 // void kernel_dsyrk_nt_l_4x4_vs_lib4(int kmax, double *alpha, double *A, double *B, double *beta, double *C, double *D, int m1, int n1)
 
 	.align	4
-	GLOB(kernel_dsyrk_nt_l_4x4_vs_lib4)
-	FUN_START(kernel_dsyrk_nt_l_4x4_vs_lib4)
+	GLOB_FUN_START(kernel_dsyrk_nt_l_4x4_vs_lib4)
 	
 
 
@@ -3963,7 +3364,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_SYRK_L_ADD_NT_4X4_LIB4
 #else
-	CALL(inner_kernel_syrk_l_add_nt_4x4_lib4)
+	bl	inner_kernel_syrk_l_add_nt_4x4_lib4
 #endif
 
 
@@ -3976,7 +3377,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_4X4_LIB4
 #else
-	CALL(inner_scale_ab_4x4_lib4)
+	bl inner_scale_ab_4x4_lib4
 #endif
 
 
@@ -3989,7 +3390,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_STORE_L_4X4_VS_LIB4
 #else
-	CALL(inner_store_l_4x4_vs_lib4)
+	bl inner_store_l_4x4_vs_lib4
 #endif
 
 
@@ -4010,8 +3411,7 @@ _ ## NAME:
 // void kernel_dsyrk_nt_u_4x4_lib4(int kmax, double *alpha, double *A, double *B, double *beta, double *C, double *D)
 
 	.align	4
-	GLOB(kernel_dsyrk_nt_u_4x4_lib4)
-	FUN_START(kernel_dsyrk_nt_u_4x4_lib4)
+	GLOB_FUN_START(kernel_dsyrk_nt_u_4x4_lib4)
 	
 
 
@@ -4029,9 +3429,9 @@ _ ## NAME:
 	mov		x10, x3 // B
 
 #if MACRO_LEVEL>=2
-	INNER_KERNEL_GEMM_NT_4X4_LIB4
+	INNER_KERNEL_GEMM_ADD_NT_4X4_LIB4
 #else
-	CALL(inner_kernel_gemm_nt_4x4_lib4)
+	bl	inner_kernel_gemm_add_nt_4x4_lib4
 #endif
 
 
@@ -4044,7 +3444,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_4X4_LIB4
 #else
-	CALL(inner_scale_ab_4x4_lib4)
+	bl inner_scale_ab_4x4_lib4
 #endif
 
 
@@ -4055,7 +3455,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_STORE_U_4X4_LIB4
 #else
-	CALL(inner_store_u_4x4_lib4)
+	bl inner_store_u_4x4_lib4
 #endif
 
 
@@ -4076,8 +3476,7 @@ _ ## NAME:
 // void kernel_dsyrk_nt_u_4x4_vs_lib4(int kmax, double *alpha, double *A, double *B, double *beta, double *C, double *D, int m1, int n1)
 
 	.align	4
-	GLOB(kernel_dsyrk_nt_u_4x4_vs_lib4)
-	FUN_START(kernel_dsyrk_nt_u_4x4_vs_lib4)
+	GLOB_FUN_START(kernel_dsyrk_nt_u_4x4_vs_lib4)
 	
 
 
@@ -4095,9 +3494,9 @@ _ ## NAME:
 	mov		x10, x3 // B
 
 #if MACRO_LEVEL>=2
-	INNER_KERNEL_GEMM_NT_4X4_LIB4
+	INNER_KERNEL_GEMM_ADD_NT_4X4_LIB4
 #else
-	CALL(inner_kernel_gemm_nt_4x4_lib4)
+	bl	inner_kernel_gemm_add_nt_4x4_lib4
 #endif
 
 
@@ -4110,7 +3509,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_4X4_LIB4
 #else
-	CALL(inner_scale_ab_4x4_lib4)
+	bl inner_scale_ab_4x4_lib4
 #endif
 
 
@@ -4123,7 +3522,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_STORE_U_4X4_VS_LIB4
 #else
-	CALL(inner_store_u_4x4_vs_lib4)
+	bl inner_store_u_4x4_vs_lib4
 #endif
 
 
@@ -4144,8 +3543,7 @@ _ ## NAME:
 // void kernel_dsyrk_nn_u_4x4_lib4(int kmax, double *alpha, double *A, int offsetB, double *B, int sdb, double *beta, double *C, double *D)
 
 	.align	4
-	GLOB(kernel_dsyrk_nn_u_4x4_lib4)
-	FUN_START(kernel_dsyrk_nn_u_4x4_lib4)
+	GLOB_FUN_START(kernel_dsyrk_nn_u_4x4_lib4)
 	
 
 
@@ -4166,15 +3564,15 @@ _ ## NAME:
 	mov		w12, w3 // offsetB
 
 #if MACRO_LEVEL>=1
-	INNER_EDGE_GEMM_NN_4X4_LIB4
+	INNER_EDGE_GEMM_ADD_NN_4X4_LIB4
 #else
-	CALL(inner_edge_gemm_nn_4x4_lib4)
+	bl	inner_edge_gemm_add_nn_4x4_lib4
 #endif
 
 #if MACRO_LEVEL>=2
-	INNER_KERNEL_GEMM_NN_4X4_LIB4
+	INNER_KERNEL_GEMM_ADD_NN_4X4_LIB4
 #else
-	CALL(inner_kernel_gemm_nn_4x4_lib4)
+	bl	inner_kernel_gemm_add_nn_4x4_lib4
 #endif
 
 
@@ -4187,7 +3585,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_4X4_LIB4
 #else
-	CALL(inner_scale_ab_4x4_lib4)
+	bl inner_scale_ab_4x4_lib4
 #endif
 
 
@@ -4198,7 +3596,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_STORE_U_4X4_LIB4
 #else
-	CALL(inner_store_u_4x4_lib4)
+	bl inner_store_u_4x4_lib4
 #endif
 
 
@@ -4219,8 +3617,7 @@ _ ## NAME:
 // void kernel_dsyrk_nn_u_4x4_vs_lib4(int kmax, double *alpha, double *A, int offsetB, double *B, int sdb, double *beta, double *C, double *D, int m1, int n1)
 
 	.align	4
-	GLOB(kernel_dsyrk_nn_u_4x4_vs_lib4)
-	FUN_START(kernel_dsyrk_nn_u_4x4_vs_lib4)
+	GLOB_FUN_START(kernel_dsyrk_nn_u_4x4_vs_lib4)
 	
 
 
@@ -4241,15 +3638,15 @@ _ ## NAME:
 	mov		w12, w3 // offsetB
 
 #if MACRO_LEVEL>=1
-	INNER_EDGE_GEMM_NN_4X4_LIB4
+	INNER_EDGE_GEMM_ADD_NN_4X4_LIB4
 #else
-	CALL(inner_edge_gemm_nn_4x4_lib4)
+	bl	inner_edge_gemm_add_nn_4x4_lib4
 #endif
 
 #if MACRO_LEVEL>=2
-	INNER_KERNEL_GEMM_NN_4X4_LIB4
+	INNER_KERNEL_GEMM_ADD_NN_4X4_LIB4
 #else
-	CALL(inner_kernel_gemm_nn_4x4_lib4)
+	bl	inner_kernel_gemm_add_nn_4x4_lib4
 #endif
 
 
@@ -4262,7 +3659,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_SCALE_AB_4X4_LIB4
 #else
-	CALL(inner_scale_ab_4x4_lib4)
+	bl inner_scale_ab_4x4_lib4
 #endif
 
 
@@ -4275,7 +3672,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_STORE_U_4X4_VS_LIB4
 #else
-	CALL(inner_store_u_4x4_vs_lib4)
+	bl inner_store_u_4x4_vs_lib4
 #endif
 
 
@@ -4296,8 +3693,7 @@ _ ## NAME:
 // void kernel_dtrsm_nt_rl_inv_4x4_lib4(int kmax, double *A, double *B, double *beta, double *C, double *D, double *E, double *inv_diag_E);
 
 	.align	4
-	GLOB(kernel_dtrsm_nt_rl_inv_4x4_lib4)
-	FUN_START(kernel_dtrsm_nt_rl_inv_4x4_lib4)
+	GLOB_FUN_START(kernel_dtrsm_nt_rl_inv_4x4_lib4)
 
 
 
@@ -4315,9 +3711,9 @@ _ ## NAME:
 	mov		x10, x2 // B
 
 #if MACRO_LEVEL>=2
-	INNER_KERNEL_GEMM_NT_4X4_LIB4
+	INNER_KERNEL_GEMM_ADD_NT_4X4_LIB4
 #else
-	CALL(inner_kernel_gemm_nt_4x4_lib4)
+	bl	inner_kernel_gemm_add_nt_4x4_lib4
 #endif
 
 
@@ -4329,7 +3725,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_SCALE_M1B_4X4_LIB4
 #else
-	CALL(inner_scale_m1b_4x4_lib4)
+	bl inner_scale_m1b_4x4_lib4
 #endif
 
 
@@ -4341,7 +3737,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_EDGE_TRSM_RLT_INV_4X4_LIB4
 #else
-	CALL(inner_edge_trsm_rlt_inv_4x4_lib4)
+	bl inner_edge_trsm_rlt_inv_4x4_lib4
 #endif
 
 
@@ -4352,7 +3748,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_STORE_4X4_LIB4
 #else
-	CALL(inner_store_4x4_lib4)
+	bl inner_store_4x4_lib4
 #endif
 
 
@@ -4373,8 +3769,7 @@ _ ## NAME:
 // void kernel_dtrsm_nt_rl_inv_4x4_vs_lib4(int kmax, double *A, double *B, double *beta, double *C, double *D, double *E, double *inv_diag_E, int m1, int n1);
 
 	.align	4
-	GLOB(kernel_dtrsm_nt_rl_inv_4x4_vs_lib4)
-	FUN_START(kernel_dtrsm_nt_rl_inv_4x4_vs_lib4)
+	GLOB_FUN_START(kernel_dtrsm_nt_rl_inv_4x4_vs_lib4)
 
 
 
@@ -4392,9 +3787,9 @@ _ ## NAME:
 	mov		x10, x2 // B
 
 #if MACRO_LEVEL>=2
-	INNER_KERNEL_GEMM_NT_4X4_LIB4
+	INNER_KERNEL_GEMM_ADD_NT_4X4_LIB4
 #else
-	CALL(inner_kernel_gemm_nt_4x4_lib4)
+	bl	inner_kernel_gemm_add_nt_4x4_lib4
 #endif
 
 
@@ -4406,7 +3801,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_SCALE_M1B_4X4_LIB4
 #else
-	CALL(inner_scale_m1b_4x4_lib4)
+	bl inner_scale_m1b_4x4_lib4
 #endif
 
 
@@ -4419,7 +3814,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_EDGE_TRSM_RLT_INV_4X4_VS_LIB4
 #else
-	CALL(inner_edge_trsm_rlt_inv_4x4_vs_lib4)
+	bl inner_edge_trsm_rlt_inv_4x4_vs_lib4
 #endif
 
 
@@ -4432,7 +3827,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_STORE_4X4_VS_LIB4
 #else
-	CALL(inner_store_4x4_vs_lib4)
+	bl inner_store_4x4_vs_lib4
 #endif
 
 
@@ -4453,8 +3848,7 @@ _ ## NAME:
 // void kernel_dtrsm_nt_rl_one_4x4_lib4(int kmax, double *A, double *B, double *beta, double *C, double *D, double *E);
 
 	.align	4
-	GLOB(kernel_dtrsm_nt_rl_one_4x4_lib4)
-	FUN_START(kernel_dtrsm_nt_rl_one_4x4_lib4)
+	GLOB_FUN_START(kernel_dtrsm_nt_rl_one_4x4_lib4)
 
 
 
@@ -4472,9 +3866,9 @@ _ ## NAME:
 	mov		x10, x2 // B
 
 #if MACRO_LEVEL>=2
-	INNER_KERNEL_GEMM_NT_4X4_LIB4
+	INNER_KERNEL_GEMM_ADD_NT_4X4_LIB4
 #else
-	CALL(inner_kernel_gemm_nt_4x4_lib4)
+	bl	inner_kernel_gemm_add_nt_4x4_lib4
 #endif
 
 
@@ -4486,7 +3880,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_SCALE_M1B_4X4_LIB4
 #else
-	CALL(inner_scale_m1b_4x4_lib4)
+	bl inner_scale_m1b_4x4_lib4
 #endif
 
 
@@ -4497,7 +3891,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_EDGE_TRSM_RLT_ONE_4X4_LIB4
 #else
-	CALL(inner_edge_trsm_rlt_one_4x4_lib4)
+	bl inner_edge_trsm_rlt_one_4x4_lib4
 #endif
 
 
@@ -4508,7 +3902,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_STORE_4X4_LIB4
 #else
-	CALL(inner_store_4x4_lib4)
+	bl inner_store_4x4_lib4
 #endif
 
 
@@ -4529,8 +3923,7 @@ _ ## NAME:
 // void kernel_dtrsm_nt_rl_one_4x4_vs_lib4(int kmax, double *A, double *B, double *beta, double *C, double *D, double *E, int m1, int n1);
 
 	.align	4
-	GLOB(kernel_dtrsm_nt_rl_one_4x4_vs_lib4)
-	FUN_START(kernel_dtrsm_nt_rl_one_4x4_vs_lib4)
+	GLOB_FUN_START(kernel_dtrsm_nt_rl_one_4x4_vs_lib4)
 
 
 
@@ -4548,9 +3941,9 @@ _ ## NAME:
 	mov		x10, x2 // B
 
 #if MACRO_LEVEL>=2
-	INNER_KERNEL_GEMM_NT_4X4_LIB4
+	INNER_KERNEL_GEMM_ADD_NT_4X4_LIB4
 #else
-	CALL(inner_kernel_gemm_nt_4x4_lib4)
+	bl	inner_kernel_gemm_add_nt_4x4_lib4
 #endif
 
 
@@ -4562,7 +3955,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_SCALE_M1B_4X4_LIB4
 #else
-	CALL(inner_scale_m1b_4x4_lib4)
+	bl inner_scale_m1b_4x4_lib4
 #endif
 
 
@@ -4574,7 +3967,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_EDGE_TRSM_RLT_ONE_4X4_VS_LIB4
 #else
-	CALL(inner_edge_trsm_rlt_one_4x4_vs_lib4)
+	bl inner_edge_trsm_rlt_one_4x4_vs_lib4
 #endif
 
 
@@ -4587,7 +3980,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_STORE_4X4_VS_LIB4
 #else
-	CALL(inner_store_4x4_vs_lib4)
+	bl inner_store_4x4_vs_lib4
 #endif
 
 
@@ -4608,8 +4001,7 @@ _ ## NAME:
 // void kernel_dtrsm_nn_ll_one_4x4_lib4(int kmax, double *A, double *B, int sdb, double *beta, double *C, double *D, double *E);
 
 	.align	4
-	GLOB(kernel_dtrsm_nn_ll_one_4x4_lib4)
-	FUN_START(kernel_dtrsm_nn_ll_one_4x4_lib4)
+	GLOB_FUN_START(kernel_dtrsm_nn_ll_one_4x4_lib4)
 
 
 
@@ -4629,9 +4021,9 @@ _ ## NAME:
 	lsl		w11, w11, #5 // 32*sdb
 
 #if MACRO_LEVEL>=2
-	INNER_KERNEL_GEMM_NN_4X4_LIB4
+	INNER_KERNEL_GEMM_ADD_NN_4X4_LIB4
 #else
-	CALL(inner_kernel_gemm_nn_4x4_lib4)
+	bl	inner_kernel_gemm_add_nn_4x4_lib4
 #endif
 
 
@@ -4643,7 +4035,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_SCALE_M1B_4X4_LIB4
 #else
-	CALL(inner_scale_m1b_4x4_lib4)
+	bl inner_scale_m1b_4x4_lib4
 #endif
 
 
@@ -4654,7 +4046,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_EDGE_TRSM_LLN_ONE_4X4_LIB4
 #else
-	CALL(inner_edge_trsm_lln_one_4x4_lib4)
+	bl inner_edge_trsm_lln_one_4x4_lib4
 #endif
 
 
@@ -4665,7 +4057,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_STORE_4X4_LIB4
 #else
-	CALL(inner_store_4x4_lib4)
+	bl inner_store_4x4_lib4
 #endif
 
 
@@ -4686,8 +4078,7 @@ _ ## NAME:
 // void kernel_dtrsm_nn_ll_one_4x4_vs_lib4(int kmax, double *A, double *B, int sdb, double *beta, double *C, double *D, double *E, int m1, int n1);
 
 	.align	4
-	GLOB(kernel_dtrsm_nn_ll_one_4x4_vs_lib4)
-	FUN_START(kernel_dtrsm_nn_ll_one_4x4_vs_lib4)
+	GLOB_FUN_START(kernel_dtrsm_nn_ll_one_4x4_vs_lib4)
 
 
 
@@ -4707,9 +4098,9 @@ _ ## NAME:
 	lsl		w11, w11, #5 // 32*sdb
 
 #if MACRO_LEVEL>=2
-	INNER_KERNEL_GEMM_NN_4X4_LIB4
+	INNER_KERNEL_GEMM_ADD_NN_4X4_LIB4
 #else
-	CALL(inner_kernel_gemm_nn_4x4_lib4)
+	bl	inner_kernel_gemm_add_nn_4x4_lib4
 #endif
 
 
@@ -4721,7 +4112,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_SCALE_M1B_4X4_LIB4
 #else
-	CALL(inner_scale_m1b_4x4_lib4)
+	bl inner_scale_m1b_4x4_lib4
 #endif
 
 
@@ -4732,7 +4123,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_EDGE_TRSM_LLN_ONE_4X4_LIB4
 #else
-	CALL(inner_edge_trsm_lln_one_4x4_lib4)
+	bl inner_edge_trsm_lln_one_4x4_lib4
 #endif
 
 
@@ -4745,7 +4136,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_STORE_4X4_VS_LIB4
 #else
-	CALL(inner_store_4x4_vs_lib4)
+	bl inner_store_4x4_vs_lib4
 #endif
 
 
@@ -4766,8 +4157,7 @@ _ ## NAME:
 // void kernel_dpotrf_nt_l_4x4_lib4(int kmax, double *A, double *B, double *C, double *D, double *inv_diag_D);
 
 	.align	4
-	GLOB(kernel_dpotrf_nt_l_4x4_lib4)
-	FUN_START(kernel_dpotrf_nt_l_4x4_lib4)
+	GLOB_FUN_START(kernel_dpotrf_nt_l_4x4_lib4)
 
 
 
@@ -4787,7 +4177,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_SYRK_L_ADD_NT_4X4_LIB4
 #else
-	CALL(inner_kernel_syrk_l_add_nt_4x4_lib4)
+	bl	inner_kernel_syrk_l_add_nt_4x4_lib4
 #endif
 
 
@@ -4798,7 +4188,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_SCALE_M11_4X4_LIB4
 #else
-	CALL(inner_scale_m11_4x4_lib4)
+	bl inner_scale_m11_4x4_lib4
 #endif
 
 
@@ -4809,7 +4199,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_EDGE_POTRF_4X4_LIB4
 #else
-	CALL(inner_edge_potrf_4x4_lib4)
+	bl inner_edge_potrf_4x4_lib4
 #endif
 
 
@@ -4820,7 +4210,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_STORE_L_4X4_LIB4
 #else
-	CALL(inner_store_l_4x4_lib4)
+	bl inner_store_l_4x4_lib4
 #endif
 
 
@@ -4841,8 +4231,7 @@ _ ## NAME:
 // void kernel_dpotrf_nt_l_4x4_vs_lib4(int kmax, double *A, double *B, double *C, double *D, double *inv_diag_D, int m1, int n1);
 
 	.align	4
-	GLOB(kernel_dpotrf_nt_l_4x4_vs_lib4)
-	FUN_START(kernel_dpotrf_nt_l_4x4_vs_lib4)
+	GLOB_FUN_START(kernel_dpotrf_nt_l_4x4_vs_lib4)
 
 
 
@@ -4862,7 +4251,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=2
 	INNER_KERNEL_SYRK_L_ADD_NT_4X4_LIB4
 #else
-	CALL(inner_kernel_syrk_l_add_nt_4x4_lib4)
+	bl	inner_kernel_syrk_l_add_nt_4x4_lib4
 #endif
 
 
@@ -4873,7 +4262,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_SCALE_M11_4X4_LIB4
 #else
-	CALL(inner_scale_m11_4x4_lib4)
+	bl inner_scale_m11_4x4_lib4
 #endif
 
 
@@ -4885,7 +4274,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_EDGE_POTRF_4X4_VS_LIB4
 #else
-	CALL(inner_edge_potrf_4x4_vs_lib4)
+	bl inner_edge_potrf_4x4_vs_lib4
 #endif
 
 
@@ -4898,7 +4287,7 @@ _ ## NAME:
 #if MACRO_LEVEL>=1
 	INNER_STORE_L_4X4_VS_LIB4
 #else
-	CALL(inner_store_l_4x4_vs_lib4)
+	bl inner_store_l_4x4_vs_lib4
 #endif
 
 

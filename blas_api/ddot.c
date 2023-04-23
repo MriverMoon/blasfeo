@@ -43,59 +43,31 @@
 
 
 #if defined(FORTRAN_BLAS_API)
-#define blasfeo_blas_ddot ddot_
+#define blas_ddot ddot_
 #endif
 
 
-double blasfeo_blas_ddot(int *pn, double *x, int *pincx, double *y, int *pincy)
+double blas_ddot(int *ptr_n, double *x, int *ptr_ix, double *y, int *ptr_iy)
 	{
-	int n = *pn;
-	int incx = *pincx;
-	int incy = *pincy;
-
-	int ix, iy;
-	int ii;
+	int n = *ptr_n;
+	int ix = *ptr_ix;
+	int iy = *ptr_iy;
 
 	double res = 0.0;
 
 	if(n<=0)
-		{
 		return res;
-		}
-
-	if ((incx==1) & (incy==1))
+	int ii;
+	if ((ix==1) & (iy==1))
 		{
-#if defined(LA_REFERENCE)
-		for(ii=0; ii<n; ii++)
-			res += x[ii]*y[ii];
-#else
 		kernel_ddot_11_lib(n, x, y, &res);
-#endif
+//		for(ii=0; ii<n; ii++)
+//			res += y[ii]*x[ii];
 		}
 	else
 		{
-		if(incx<0)
-			{
-			ix = - (n-1) * incx;
-			}
-		else
-			{
-			ix = 0;
-			}
-		if(incy<0)
-			{
-			iy = - (n-1) * incy;
-			}
-		else
-			{
-			iy = 0;
-			}
 		for(ii=0; ii<n; ii++)
-			{
-			res += x[ix]*y[iy];
-			ix += incx;
-			iy += incy;
-			}
+			res += y[ii*iy]*x[ii*ix];
 		}
 	return res;
 

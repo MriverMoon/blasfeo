@@ -89,6 +89,17 @@ NAME:
 	.size	NAME, .-NAME
 #define CALL(NAME) \
 	call NAME
+#define ZERO_ACC \
+	vxorpd	%ymm0, %ymm0, %ymm0; \
+	vmovapd	%ymm0, %ymm1; \
+	vmovapd	%ymm0, %ymm2; \
+	vmovapd	%ymm0, %ymm3
+#define NEG_ACC \
+	vmovapd		.LC11(%rip), %ymm15; \
+	vxorpd		%ymm15, %ymm0, %ymm0; \
+	vxorpd		%ymm15, %ymm1, %ymm1; \
+	vxorpd		%ymm15, %ymm2, %ymm2; \
+	vxorpd		%ymm15, %ymm3, %ymm3
 
 #else // defined(OS_MAC)
 
@@ -100,6 +111,17 @@ _ ## NAME:
 #define FUN_END(NAME)
 #define CALL(NAME) \
 	callq _ ## NAME
+#define ZERO_ACC \
+	vxorpd	%ymm0, %ymm0, %ymm0; \
+	vmovapd	%ymm0, %ymm1; \
+	vmovapd	%ymm0, %ymm2; \
+	vmovapd	%ymm0, %ymm3
+#define NEG_ACC \
+	vmovapd		LC11(%rip), %ymm15; \
+	vxorpd		%ymm15, %ymm0, %ymm0; \
+	vxorpd		%ymm15, %ymm1, %ymm1; \
+	vxorpd		%ymm15, %ymm2, %ymm2; \
+	vxorpd		%ymm15, %ymm3, %ymm3
 
 #endif
 
@@ -179,6 +201,17 @@ NAME:
 #define FUN_END(NAME)
 #define CALL(NAME) \
 	call NAME
+#define ZERO_ACC \
+	vxorpd	%ymm0, %ymm0, %ymm0; \
+	vmovapd	%ymm0, %ymm1; \
+	vmovapd	%ymm0, %ymm2; \
+	vmovapd	%ymm0, %ymm3
+#define NEG_ACC \
+	vmovapd		.LC11(%rip), %ymm15; \
+	vxorpd		%ymm15, %ymm0, %ymm0; \
+	vxorpd		%ymm15, %ymm1, %ymm1; \
+	vxorpd		%ymm15, %ymm2, %ymm2; \
+	vxorpd		%ymm15, %ymm3, %ymm3
 
 #else
 
@@ -3520,12 +3553,6 @@ NAME:
 
 
 
-// input arguments:
-// r10  <- kmax
-// r11  <- A
-// r12  <- ...*sda
-// r13  <- C
-
 #if MACRO_LEVEL>=1
 	.macro INNER_KERNEL_DPACP_NN_4_0_LIB4
 #else
@@ -3593,12 +3620,6 @@ NAME:
 
 
 
-
-// input arguments:
-// r10  <- kmax
-// r11  <- A
-// r12  <- ...*sda
-// r13  <- C
 
 #if MACRO_LEVEL>=1
 	.macro INNER_KERNEL_DPACP_NN_4_1_LIB4
@@ -3683,12 +3704,6 @@ NAME:
 
 
 
-// input arguments:
-// r10  <- kmax
-// r11  <- A
-// r12  <- ...*sda
-// r13  <- C
-
 #if MACRO_LEVEL>=1
 	.macro INNER_KERNEL_DPACP_NN_4_2_LIB4
 #else
@@ -3766,12 +3781,6 @@ NAME:
 
 
 
-
-// input arguments:
-// r10  <- kmax
-// r11  <- A
-// r12  <- ...*sda
-// r13  <- C
 
 #if MACRO_LEVEL>=1
 	.macro INNER_KERNEL_DPACP_NN_4_3_LIB4
@@ -3856,12 +3865,6 @@ NAME:
 
 
 
-// input arguments:
-// r10  <- kmax
-// r11  <- A
-// r12  <- ...*sda
-// r13  <- C
-
 #if MACRO_LEVEL>=1
 	.macro INNER_KERNEL_DPACP_NN_3_0_LIB4
 #else
@@ -3939,12 +3942,6 @@ NAME:
 
 
 
-
-// input arguments:
-// r10  <- kmax
-// r11  <- A
-// r12  <- ...*sda
-// r13  <- C
 
 #if MACRO_LEVEL>=1
 	.macro INNER_KERNEL_DPACP_NN_3_2_LIB4
@@ -4024,12 +4021,6 @@ NAME:
 
 
 
-// input arguments:
-// r10  <- kmax
-// r11  <- A
-// r12  <- ...*sda
-// r13  <- C
-
 #if MACRO_LEVEL>=1
 	.macro INNER_KERNEL_DPACP_NN_3_3_LIB4
 #else
@@ -4108,12 +4099,6 @@ NAME:
 
 
 
-// input arguments:
-// r10  <- kmax
-// r11  <- A
-// r12  <- ...*sda
-// r13  <- C
-
 #if MACRO_LEVEL>=1
 	.macro INNER_KERNEL_DPACP_NN_2_0_LIB4
 #else
@@ -4181,12 +4166,6 @@ NAME:
 
 
 
-
-// input arguments:
-// r10  <- kmax
-// r11  <- A
-// r12  <- ...*sda
-// r13  <- C
 
 #if MACRO_LEVEL>=1
 	.macro INNER_KERNEL_DPACP_NN_2_1_LIB4
@@ -4260,12 +4239,6 @@ NAME:
 
 
 
-
-// input arguments:
-// r10  <- kmax
-// r11  <- A
-// r12  <- ...*sda
-// r13  <- C
 
 #if MACRO_LEVEL>=1
 	.macro INNER_KERNEL_DPACP_NN_1_0_LIB4
